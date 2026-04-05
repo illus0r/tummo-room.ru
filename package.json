@@ -1,0 +1,30 @@
+{
+  "name": "tummo-room.ru",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i src/assets/css/input.css -o _site/assets/css/style.css --minify",
+    "build:11ty": "eleventy",
+    "build": "npm run build:css && npm run build:11ty",
+    "dev:css": "tailwindcss -i src/assets/css/input.css -o _site/assets/css/style.css --watch",
+    "dev:11ty": "eleventy --serve",
+    "dev": "npm run dev:css & npm run dev:11ty"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/illus0r/tummo-room.ru.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/illus0r/tummo-room.ru/issues"
+  },
+  "homepage": "https://github.com/illus0r/tummo-room.ru#readme",
+  "description": "",
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.5",
+    "@tailwindcss/cli": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  }
+}
