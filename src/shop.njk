@@ -1,12 +1,104 @@
 ---
 layout: base.njk
-title: Магазин керамики — Tummo Room
+title: Керамика ручной работы — Tummo Room
 ---
 
-<main class="min-h-screen flex items-center justify-center">
-  <div class="text-center p-8">
-    <h1 class="text-4xl font-light mb-4">Магазин керамики</h1>
-    <p class="text-neutral-400 text-lg">Скоро здесь появятся товары</p>
-    <a href="/" class="inline-block mt-8 text-neutral-400 hover:text-white transition-colors">&larr; На главную</a>
-  </div>
+<main>
+  <!-- Обложка -->
+  <section class="relative h-[90vh] min-h-[500px] overflow-hidden">
+    <img src="/assets/img/shop-hero.webp" alt="Стопка чайных пиал ручной работы" class="absolute inset-0 w-full h-full object-cover">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30"></div>
+    <div class="absolute inset-0 z-10 flex flex-col justify-between p-8 md:p-12">
+      <a href="/" class="inline-block">
+        <img src="/assets/img/logo-horizontal.svg" alt="Туммо" class="h-14 w-auto max-w-52">
+      </a>
+      <p class="text-sm md:text-base uppercase tracking-[0.25em] text-[#d9c5ae]/90">Керамика ручной работы</p>
+    </div>
+  </section>
+
+  <!-- Текст -->
+  <article class="mx-auto max-w-2xl px-6 py-20 md:py-28 space-y-16 md:space-y-24">
+
+    <p class="text-xl md:text-2xl font-light leading-relaxed">
+      Меня зовут Оля. Я делаю чайную керамику руками — в небольшой студии с видом на Волгу.
+      Мне важно, чтобы посуда была тихой: чтобы не спорила с чаем, а помогала вернуться вниманием к себе и к этому моменту.
+    </p>
+
+    <figure class="-mx-6 sm:mx-0">
+      <img src="/assets/img/shop-portrait.webp" alt="Оля в мастерской" loading="lazy" class="w-full">
+    </figure>
+
+    <p class="text-xl md:text-2xl font-light leading-relaxed">
+      Вдохновляюсь природой. Прогулкой по лесу, где хочется остановиться и вдохнуть полной грудью.
+      Корой дерева, игрой теней от листвы на земле, тем, как складываются естественные формы и цвета.
+      Отсюда палитра и силуэты моих пиал.
+    </p>
+
+    <figure class="-mx-6 sm:mx-0">
+      <img src="/assets/img/shop-nature.webp" alt="Засушенные травы в керамической вазе на контровом свете" loading="lazy" class="w-full">
+    </figure>
+
+    <p class="text-xl md:text-2xl font-light leading-relaxed">
+      В керамике мне ближе всего спокойный цвет, естественные формы и небрежная асимметрия — как у природных фактур.
+      Глина, глазури и жар печи — тоже стихии природы; я лишь помогаю им найти форму, где рукотворное и естественное в балансе.
+      Это посуда для тех, кто умеет замедлиться и заметить красоту мира.
+    </p>
+
+    <figure class="-mx-6 sm:mx-0">
+      <img src="/assets/img/shop-ceramics.webp" alt="Чайные пиалы ручной работы на столе" loading="lazy" class="w-full">
+    </figure>
+
+    <div class="text-xl md:text-2xl font-light leading-relaxed">
+      <p>
+        Купить керамику можно во ВКонтакте —
+        <a href="https://vk.ru/tummo_room" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">vk.ru/tummo_room</a>.
+        А ещё она есть в чайных:
+      </p>
+      <ul class="mt-6 space-y-3 text-lg md:text-xl text-[#d9c5ae]/85">
+        <li>
+          <span class="text-[#d9c5ae]/50">Волгоград — </span>
+          <a href="https://teaclouds.ru/" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Чайные облака</a>,
+          <a href="https://drakonisoroka.ru/" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Дракон и сорока</a>,
+          <a href="https://instagram.com/somely_me" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Somely</a>
+        </li>
+        <li>
+          <span class="text-[#d9c5ae]/50">Санкт-Петербург — </span>
+          <a href="https://vk.ru/tsikadatea" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Цикада</a>,
+          <a href="https://чяй.рф/" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Чяй</a>,
+          <a href="https://vk.ru/po_putea" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">По пути</a>
+        </li>
+        <li>
+          <span class="text-[#d9c5ae]/50">Новосибирск — </span>
+          <a href="https://chajen.ru/" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Ча жень</a>,
+          <a href="https://vk.ru/2dragons_tea" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Два дракона</a>
+        </li>
+        <li>
+          <span class="text-[#d9c5ae]/50">Краснодар — </span>
+          <a href="https://koitea.taplink.ws/" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">Кои</a>
+        </li>
+      </ul>
+    </div>
+
+    <figure class="-mx-6 sm:mx-0">
+      <img src="/assets/img/shop-tea.webp" alt="Чайная церемония в пиалах Tummo Room" loading="lazy" class="w-full">
+    </figure>
+
+    <p class="text-xl md:text-2xl font-light leading-relaxed">
+      Если вам близок мой стиль, я могу сделать керамику на заказ — для дома или для заведения.
+      Напишите мне:
+      <a href="https://t.me/Librocubic" class="underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">@Librocubic</a>.
+    </p>
+
+    <figure class="-mx-6 sm:mx-0">
+      <img src="/assets/img/shop-wheel.webp" alt="Оля за гончарным кругом" loading="lazy" class="w-full">
+    </figure>
+
+  </article>
+
+  <footer class="mx-auto max-w-2xl px-6 pb-24 text-center">
+    <a href="https://vk.ru/tummo_room" class="inline-block text-lg md:text-xl font-light uppercase tracking-[0.2em] underline underline-offset-8 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors">
+      Смотреть керамику во ВКонтакте
+    </a>
+    <a href="/" class="block mt-10 text-sm text-[#d9c5ae]/50 hover:text-[#d9c5ae] transition-colors">← На главную</a>
+  </footer>
 </main>
