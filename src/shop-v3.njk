@@ -1,0 +1,177 @@
+---
+layout: base.njk
+title: Керамика ручной работы — Tummo Room
+---
+
+{% set slotA = [
+  { f: "window",   a: "Золотистый профиль у окна против света" },
+  { f: "sun",      a: "Лицо запрокинуто к солнцу, глаза закрыты" },
+  { f: "portrait", a: "Оля смотрит в камеру, за спиной полки с керамикой" },
+  { f: "doorway",  a: "Оля в запылённом фартуке стоит в дверном проёме" },
+  { f: "throw",    a: "Мастер вытягивает высокую чашку на гончарном круге" },
+  { f: "center",   a: "Руки центруют глину на гончарном круге" },
+  { f: "wedge",    a: "Мастер в фартуке мнёт глину на доске" },
+  { f: "hand",     a: "Ладонь в глиняной пыли на плече, тёплый свет" }
+] %}
+
+{% set slotB = [
+  { f: "knead",    a: "Руки приминают шарик глины на гончарном круге" },
+  { f: "center",   a: "Руки центруют глину на гончарном круге, вид сбоку" },
+  { f: "wedge",    a: "Фигура в фартуке мнёт глину на доске" },
+  { f: "throw",    a: "Мастер вытягивает высокую чашку на круге, улыбается" },
+  { f: "hand",     a: "Ладонь в глиняной пыли на плече" },
+  { f: "tea",      a: "Руки с гайванью пересыпают чайный лист в пиалу" },
+  { f: "tumbler",  a: "Две руки держат светлый стакан-волну с потёками глазури" },
+  { f: "table",    a: "Готовые пиалы на столе, рука тянется за одной" }
+] %}
+
+{% set slotC = [
+  { f: "stack",    a: "Руки держат вертикальную стопку из восьми глазурованных пиал" },
+  { f: "cup",      a: "Синяя пиала с потёками глазури на подоконнике" },
+  { f: "tumbler",  a: "Светлый стакан-волна с потёками глазури в руках" },
+  { f: "table",    a: "Много готовых пиал на столе" },
+  { f: "vase",     a: "Сухие полевые травы в рукотворной вазе против света" },
+  { f: "tea",      a: "Гайвань и пиала, чайный лист" },
+  { f: "portrait", a: "Оля у полок с керамикой" }
+] %}
+
+{% set linkClass = "underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors" %}
+
+<style>
+  [data-slot] {
+    position: relative;
+    background: #171717;
+    overflow: hidden;
+  }
+  [data-slot] img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity var(--fade, 6s) ease-in-out;
+    will-change: opacity;
+  }
+  [data-slot] img.is-on { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot] img { transition: none; }
+  }
+</style>
+
+<main class="overflow-x-hidden">
+
+  <header class="w-full px-6 md:px-12 pt-8 md:pt-12 pb-10 md:pb-24">
+    <a href="/" class="inline-block">
+      <img src="/assets/img/logo-horizontal.svg" alt="Tummo Room" class="h-14 w-auto">
+    </a>
+  </header>
+
+  <!-- Панель A: крупное фото прижато к левому краю, текст плавает справа -->
+  <section class="w-full flex flex-col md:flex-row md:items-center gap-10 md:gap-0 py-16 md:py-32">
+    <div data-slot data-hold="12000" data-delay="0" style="--fade:6s"
+         class="w-full md:w-[58vw] h-[62vh] md:h-[88vh] shrink-0">
+      {% for p in slotA %}
+      <img src="/assets/img/photo-{{ p.f }}.webp" alt="{{ p.a }}"
+           {% if loop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+      {% endfor %}
+    </div>
+    <div class="px-6 md:px-16 md:flex-1 md:min-w-0">
+      <p class="text-2xl md:text-3xl font-light leading-relaxed max-w-[34ch]">
+        Меня зовут Оля. Я делаю чайную керамику руками — в небольшой студии с видом на Волгу. Мне важно, чтобы посуда была тихой: чтобы не спорила с чаем, а помогала вернуться вниманием к себе и к этому моменту.
+      </p>
+    </div>
+  </section>
+
+  <!-- Текст в тёмном негативном пространстве, смещён вправо -->
+  <section class="w-full px-6 md:px-16 py-24 md:py-52">
+    <p class="text-2xl md:text-3xl font-light leading-relaxed max-w-[40ch] md:ml-auto md:mr-[6vw]">
+      Вдохновляюсь природой. Прогулкой по лесу, где хочется остановиться и вдохнуть полной грудью. Корой дерева, игрой теней от листвы на земле, тем, как складываются естественные формы и цвета. Отсюда палитра и силуэты моих пиал.
+    </p>
+  </section>
+
+  <!-- Панель B: текст плавает слева, крупное фото прижато к правому краю -->
+  <section class="w-full flex flex-col md:flex-row md:items-center gap-10 md:gap-0 py-16 md:py-32">
+    <div class="order-2 md:order-1 px-6 md:px-16 md:flex-1 md:min-w-0">
+      <p class="text-2xl md:text-3xl font-light leading-relaxed max-w-[36ch]">
+        В керамике мне ближе всего спокойный цвет, естественные формы и небрежная асимметрия — как у природных фактур. Глина, глазури и жар печи — тоже стихии природы; я лишь помогаю им найти форму, где рукотворное и естественное в балансе. Это посуда для тех, кто умеет замедлиться и заметить красоту мира.
+      </p>
+    </div>
+    <div data-slot data-hold="10000" data-delay="6000" style="--fade:5.5s"
+         class="order-1 md:order-2 w-full md:w-[60vw] h-[62vh] md:h-[85vh] shrink-0">
+      {% for p in slotB %}
+      <img src="/assets/img/photo-{{ p.f }}.webp" alt="{{ p.a }}"
+           {% if loop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Текст: где купить. Смещён влево -->
+  <section class="w-full px-6 md:px-16 py-24 md:py-52">
+    <div class="max-w-[46ch] md:ml-[6vw] font-light leading-relaxed">
+      <p class="text-2xl md:text-3xl mb-8">
+        Купить керамику можно во ВКонтакте — <a href="https://vk.ru/tummo_room" class="{{ linkClass }}">vk.ru/tummo_room</a>. А ещё она есть в чайных:
+      </p>
+      <span class="block text-xl md:text-2xl mt-3">
+        Волгоград — <a href="https://teaclouds.ru/" class="{{ linkClass }}">Чайные облака</a>, <a href="https://drakonisoroka.ru/" class="{{ linkClass }}">Дракон и сорока</a>, <a href="https://instagram.com/somely_me" class="{{ linkClass }}">Somely</a>
+      </span>
+      <span class="block text-xl md:text-2xl mt-3">
+        Санкт-Петербург — <a href="https://vk.ru/tsikadatea" class="{{ linkClass }}">Цикада</a>, <a href="https://чяй.рф/" class="{{ linkClass }}">Чяй</a>, <a href="https://vk.ru/po_putea" class="{{ linkClass }}">По пути</a>
+      </span>
+      <span class="block text-xl md:text-2xl mt-3">
+        Новосибирск — <a href="https://chajen.ru/" class="{{ linkClass }}">Ча жень</a>, <a href="https://vk.ru/2dragons_tea" class="{{ linkClass }}">Два дракона</a>
+      </span>
+      <span class="block text-xl md:text-2xl mt-3">
+        Краснодар — <a href="https://koitea.taplink.ws/" class="{{ linkClass }}">Кои</a>
+      </span>
+    </div>
+  </section>
+
+  <!-- Панель C: крупное фото прижато к левому краю, текст плавает справа -->
+  <section class="w-full flex flex-col md:flex-row md:items-center gap-10 md:gap-0 py-16 md:py-32">
+    <div data-slot data-hold="11000" data-delay="12000" style="--fade:6.5s"
+         class="w-full md:w-[54vw] h-[62vh] md:h-[80vh] shrink-0">
+      {% for p in slotC %}
+      <img src="/assets/img/photo-{{ p.f }}.webp" alt="{{ p.a }}"
+           {% if loop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+      {% endfor %}
+    </div>
+    <div class="px-6 md:px-16 md:flex-1 md:min-w-0">
+      <p class="text-2xl md:text-3xl font-light leading-relaxed max-w-[34ch]">
+        Если вам близок мой стиль, я могу сделать керамику на заказ — для дома или для заведения. Напишите мне: <a href="https://t.me/Librocubic" class="{{ linkClass }}">@Librocubic</a>.
+      </p>
+    </div>
+  </section>
+
+  <footer class="w-full px-6 md:px-16 pt-16 md:pt-24 pb-20 md:pb-32">
+    <a href="/" class="text-xl md:text-2xl font-light {{ linkClass }}">← На главную</a>
+  </footer>
+
+</main>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var slots = document.querySelectorAll('[data-slot]');
+    Array.prototype.forEach.call(slots, function (slot) {
+      var imgs = Array.prototype.slice.call(slot.querySelectorAll('img'));
+      if (!imgs.length) return;
+      imgs[0].classList.add('is-on');
+      if (reduce || imgs.length < 2) return;
+
+      var i = 0;
+      var hold = parseInt(slot.getAttribute('data-hold'), 10) || 14000;
+      var delay = parseInt(slot.getAttribute('data-delay'), 10) || 0;
+
+      function step() {
+        var cur = imgs[i];
+        i = (i + 1) % imgs.length;
+        var nxt = imgs[i];
+        nxt.classList.add('is-on');
+        cur.classList.remove('is-on');
+        setTimeout(step, hold);
+      }
+      setTimeout(step, delay + hold);
+    });
+  })();
+</script>

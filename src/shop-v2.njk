@@ -1,0 +1,305 @@
+---
+layout: base.njk
+title: Керамика ручной работы — Tummo Room
+---
+{% set lnk = "underline underline-offset-4 decoration-1 decoration-[#d9c5ae]/40 hover:decoration-[#d9c5ae] transition-colors" %}
+
+<style>
+  .spread{ max-width:1200px; margin:0 auto; padding:1.5rem 1rem 3rem; }
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; grid-auto-flow:row dense; }
+  .cell{ position:relative; min-width:0; }
+
+  .txt{ grid-column:1 / -1; padding:1rem .25rem; font-weight:300; }
+  .txt p{ margin:0; }
+  .txt p + p{ margin-top:.55rem; }
+
+  .brand{ grid-column:1 / -1; padding:.25rem; }
+  .tagline{ grid-column:1 / -1; padding:.5rem .25rem 1rem; }
+  .foot{ grid-column:1 / -1; text-align:center; padding:2rem .25rem 0; }
+
+  .photo{ grid-column:span 2; aspect-ratio:2 / 3; overflow:hidden; background:#171717; }
+  .photo .ph-img{ position:absolute; inset:0; width:100%; height:100%; opacity:0;
+    transition:opacity 1.5s ease; background:#1c1c1c; }
+  .photo.lit .ph-img{ opacity:1; }
+
+  .decor{ display:none; }
+
+  @media (min-width:1024px){
+    .spread{ padding:2.5rem 1.5rem 4rem; }
+    .grid{ grid-template-columns:repeat(12,1fr); grid-auto-rows:clamp(90px, 7.6vw, 104px); }
+    .cell{ outline:1px solid rgba(217,197,174,.05); outline-offset:-1px; }
+    .txt{ grid-column:auto; grid-area:var(--a); display:flex; flex-direction:column;
+      justify-content:center; padding:.5rem .7rem; }
+    .brand,.tagline,.foot{ grid-column:auto; grid-area:var(--a); display:flex; }
+    .brand{ align-items:flex-start; padding:.5rem .7rem; }
+    .tagline{ align-items:flex-end; justify-content:flex-start; padding:.7rem; }
+    .foot{ flex-direction:column; align-items:center; justify-content:center; padding:.7rem; }
+    .photo{ grid-column:auto; grid-area:var(--a); aspect-ratio:auto; }
+    .decor{ display:block; grid-area:var(--a); background:#171717; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .photo .ph-img{ transition:none !important; }
+  }
+</style>
+
+<main class="overflow-x-hidden">
+  <div class="spread">
+    <div class="grid">
+
+      <!-- логотип -->
+      <div class="cell brand" style="--a:1 / 1 / 3 / 5">
+        <a href="/" class="inline-block">
+          <img src="/assets/img/logo-horizontal.svg" alt="Туммо" class="h-14 w-auto max-w-52">
+        </a>
+      </div>
+
+      <!-- тихая подпись, без рубрики -->
+      <div class="cell tagline" style="--a:1 / 10 / 3 / 13">
+        <span class="text-[0.7rem] uppercase tracking-[0.3em] text-[#d9c5ae]/50 font-light">
+          ручная чайная керамика · студия у Волги
+        </span>
+      </div>
+
+      <div class="cell decor" style="--a:1 / 5 / 3 / 10"></div>
+
+      <!-- текст 1 -->
+      <div class="cell txt" style="--a:3 / 1 / 6 / 7">
+        <p class="text-[1.4rem] xl:text-[1.55rem] leading-[1.5]">
+          Меня зовут Оля. Я делаю чайную керамику руками — в небольшой студии с видом на Волгу.
+          Мне важно, чтобы посуда была тихой: чтобы не спорила с чаем, а помогала вернуться
+          вниманием к себе и к этому моменту.
+        </p>
+      </div>
+
+      <div class="cell decor" style="--a:3 / 7 / 6 / 8"></div>
+
+      <div class="cell photo lit" style="--a:3 / 8 / 6 / 10" data-photo-slot data-init-idx="3">
+        <img class="ph-img" style="opacity:1;object-fit:contain;object-position:50% 50%"
+          src="/assets/img/photo-portrait.webp"
+          alt="Оля смотрит в камеру, за спиной полки с керамикой" loading="eager" decoding="async">
+      </div>
+
+      <div class="cell photo" style="--a:3 / 11 / 6 / 13" data-photo-slot></div>
+
+      <div class="cell photo lit" style="--a:6 / 1 / 10 / 4" data-photo-slot data-init-idx="2">
+        <img class="ph-img" style="opacity:1;object-fit:contain;object-position:50% 50%"
+          src="/assets/img/photo-vase.webp"
+          alt="Сухие полевые травы в рукотворной вазе на контровом свете" loading="eager" decoding="async">
+      </div>
+
+      <div class="cell decor" style="--a:6 / 4 / 9 / 5"></div>
+
+      <!-- текст 2 -->
+      <div class="cell txt" style="--a:6 / 5 / 9 / 11">
+        <p class="text-[1.12rem] xl:text-[1.22rem] leading-[1.55]">
+          Вдохновляюсь природой. Прогулкой по лесу, где хочется остановиться и вдохнуть полной
+          грудью. Корой дерева, игрой теней от листвы на земле, тем, как складываются
+          естественные формы и цвета. Отсюда палитра и силуэты моих пиал.
+        </p>
+      </div>
+
+      <div class="cell photo" style="--a:6 / 11 / 9 / 13" data-photo-slot></div>
+
+      <div class="cell photo lit" style="--a:9 / 11 / 12 / 13" data-photo-slot data-init-idx="0">
+        <img class="ph-img" style="opacity:1;object-fit:contain;object-position:50% 50%"
+          src="/assets/img/photo-stack.webp"
+          alt="Руки держат вертикальную стопку из восьми глазурованных пиал" loading="eager" decoding="async">
+      </div>
+
+      <!-- текст 3 -->
+      <div class="cell txt" style="--a:9 / 5 / 14 / 11">
+        <p class="text-[1.05rem] xl:text-[1.16rem] leading-[1.5]">
+          В керамике мне ближе всего спокойный цвет, естественные формы и небрежная асимметрия —
+          как у природных фактур. Глина, глазури и жар печи — тоже стихии природы; я лишь помогаю
+          им найти форму, где рукотворное и естественное в балансе. Это посуда для тех, кто умеет
+          замедлиться и заметить красоту мира.
+        </p>
+      </div>
+
+      <div class="cell photo lit" style="--a:10 / 1 / 13 / 3" data-photo-slot data-init-idx="12">
+        <img class="ph-img" style="opacity:1;object-fit:cover;object-position:50% 50%"
+          src="/assets/img/photo-tea.webp"
+          alt="Руки с гайванью пересыпают чайный лист в пиалу" loading="eager" decoding="async">
+      </div>
+
+      <div class="cell decor" style="--a:10 / 3 / 13 / 5"></div>
+
+      <div class="cell photo" style="--a:13 / 1 / 18 / 4" data-photo-slot></div>
+
+      <div class="cell decor" style="--a:13 / 4 / 19 / 5"></div>
+
+      <!-- текст 4 -->
+      <div class="cell txt" style="--a:14 / 5 / 19 / 11">
+        <div class="text-[1rem] xl:text-[1.1rem] leading-[1.6]">
+          <p>
+            Купить керамику можно во ВКонтакте —
+            <a href="https://vk.ru/tummo_room" class="{{ lnk }}">vk.ru/tummo_room</a>.
+            А ещё она есть в чайных:
+          </p>
+          <p class="mt-3"><span class="text-[#d9c5ae]/50">Волгоград — </span>
+            <a href="https://teaclouds.ru/" class="{{ lnk }}">Чайные облака</a>,
+            <a href="https://drakonisoroka.ru/" class="{{ lnk }}">Дракон и сорока</a>,
+            <a href="https://instagram.com/somely_me" class="{{ lnk }}">Somely</a></p>
+          <p><span class="text-[#d9c5ae]/50">Санкт-Петербург — </span>
+            <a href="https://vk.ru/tsikadatea" class="{{ lnk }}">Цикада</a>,
+            <a href="https://чяй.рф/" class="{{ lnk }}">Чяй</a>,
+            <a href="https://vk.ru/po_putea" class="{{ lnk }}">По пути</a></p>
+          <p><span class="text-[#d9c5ae]/50">Новосибирск — </span>
+            <a href="https://chajen.ru/" class="{{ lnk }}">Ча жень</a>,
+            <a href="https://vk.ru/2dragons_tea" class="{{ lnk }}">Два дракона</a></p>
+          <p><span class="text-[#d9c5ae]/50">Краснодар — </span>
+            <a href="https://koitea.taplink.ws/" class="{{ lnk }}">Кои</a></p>
+        </div>
+      </div>
+
+      <div class="cell photo" style="--a:13 / 11 / 16 / 13" data-photo-slot></div>
+
+      <div class="cell photo lit" style="--a:16 / 11 / 19 / 13" data-photo-slot data-init-idx="13">
+        <img class="ph-img" style="opacity:1;object-fit:cover;object-position:50% 50%"
+          src="/assets/img/photo-knead.webp"
+          alt="Две руки приминают шарик глины на круге" loading="eager" decoding="async">
+      </div>
+
+      <!-- текст 5 -->
+      <div class="cell txt" style="--a:19 / 1 / 21 / 8">
+        <p class="text-[1.12rem] xl:text-[1.22rem] leading-[1.5]">
+          Если вам близок мой стиль, я могу сделать керамику на заказ — для дома или для заведения.
+          Напишите мне: <a href="https://t.me/Librocubic" class="{{ lnk }}">@Librocubic</a>.
+        </p>
+      </div>
+
+      <div class="cell foot" style="--a:21 / 1 / 23 / 13">
+        <a href="https://vk.ru/tummo_room" class="{{ lnk }} text-sm md:text-base uppercase tracking-[0.2em] font-light">
+          Смотреть керамику во ВКонтакте
+        </a>
+        <a href="/" class="block mt-5 text-xs text-[#d9c5ae]/50 hover:text-[#d9c5ae] transition-colors">← На главную</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var BASE = '/assets/img/';
+      var POOL = [
+        { s: 'photo-stack.webp',   f: 'contain', a: 'Руки держат вертикальную стопку из восьми глазурованных пиал' },
+        { s: 'photo-tumbler.webp', f: 'contain', a: 'Две ладони держат светлый стакан-волну с потёками глазури' },
+        { s: 'photo-vase.webp',    f: 'contain', a: 'Сухие полевые травы в рукотворной вазе на контровом свете' },
+        { s: 'photo-portrait.webp',f: 'contain', a: 'Оля смотрит в камеру, за спиной полки с керамикой' },
+        { s: 'photo-doorway.webp', f: 'contain', a: 'Оля стоит в дверном проёме в запылённом фартуке' },
+        { s: 'photo-window.webp',  f: 'contain', a: 'Золотистый контровой профиль Оли у окна' },
+        { s: 'photo-wedge.webp',   f: 'contain', a: 'Оля мнёт глину на доске, за спиной гирлянда-боке' },
+        { s: 'photo-throw.webp',   f: 'contain', a: 'Оля вытягивает высокую чашку на гончарном круге и улыбается' },
+        { s: 'photo-center.webp',  f: 'contain', a: 'Оля центрует глину на гончарном круге' },
+        { s: 'photo-sun.webp',     f: 'contain', a: 'Лицо запрокинуто к солнцу, глаза закрыты' },
+        { s: 'photo-cup.webp',     f: 'cover', p: '50% 100%', a: 'Синяя пиала с потёками глазури на подоконнике' },
+        { s: 'photo-table.webp',   f: 'cover', p: '50% 42%',  a: 'Готовые пиалы на столе, рука тянется за одной' },
+        { s: 'photo-tea.webp',     f: 'cover', a: 'Руки с гайванью пересыпают чайный лист в пиалу' },
+        { s: 'photo-knead.webp',   f: 'cover', a: 'Две руки приминают шарик глины на круге' },
+        { s: 'photo-hand.webp',    f: 'cover', a: 'Ладонь в глиняной пыли на плече, тёплый свет' }
+      ];
+      var FADE = 1500;
+
+      var slots = [].slice.call(document.querySelectorAll('.photo[data-photo-slot]'));
+      if (!slots.length) return;
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      slots.forEach(function (sl) {
+        sl._idx = sl.dataset.initIdx !== undefined ? parseInt(sl.dataset.initIdx, 10) : null;
+      });
+
+      function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+      function litSlots() { return slots.filter(function (s) { return s._idx != null; }); }
+      function darkSlots() { return slots.filter(function (s) { return s._idx == null; }); }
+      function onScreen() { return litSlots().map(function (s) { return s._idx; }); }
+
+      function choosePhoto(extra) {
+        var used = {};
+        onScreen().forEach(function (i) { used[i] = 1; });
+        (extra || []).forEach(function (i) { used[i] = 1; });
+        var free = [];
+        for (var i = 0; i < POOL.length; i++) { if (!used[i]) free.push(i); }
+        if (!free.length) { for (var j = 0; j < POOL.length; j++) free.push(j); }
+        return rnd(free);
+      }
+
+      function paint(slot, idx) {
+        var p = POOL[idx];
+        var img = slot.querySelector('img.ph-img');
+        if (!img) {
+          img = document.createElement('img');
+          img.className = 'ph-img';
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          slot.appendChild(img);
+        }
+        img.src = BASE + p.s;
+        img.alt = p.a;
+        img.style.objectFit = p.f;
+        img.style.objectPosition = p.p || '50% 50%';
+        void img.offsetWidth;
+        slot.classList.add('lit');
+        img.style.opacity = '1';
+        slot._idx = idx;
+      }
+
+      function show(slot, idx) {
+        var img = slot.querySelector('img.ph-img');
+        if (img && slot.classList.contains('lit') && img.getAttribute('src')) {
+          img.style.opacity = '0';
+          window.setTimeout(function () { paint(slot, idx); }, FADE + 120);
+        } else {
+          paint(slot, idx);
+        }
+      }
+
+      function hide(slot) {
+        var img = slot.querySelector('img.ph-img');
+        slot._idx = null;
+        slot.classList.remove('lit');
+        if (img) {
+          img.style.opacity = '0';
+          window.setTimeout(function () {
+            if (!slot.classList.contains('lit') && img.parentNode) img.parentNode.removeChild(img);
+          }, FADE + 120);
+        }
+      }
+
+      // первичная отрисовка предзагруженных ячеек
+      slots.forEach(function (sl) { if (sl._idx != null) paint(sl, sl._idx); });
+
+      if (reduce) {
+        var d = darkSlots();
+        while (litSlots().length < 6 && d.length) { paint(d.shift(), choosePhoto()); }
+        return;
+      }
+
+      function tick() {
+        var lit = litSlots();
+        var dark = darkSlots();
+        var r = Math.random();
+
+        if (lit.length && r < 0.25) {
+          // сетка «перекладывает» одну ячейку: меняем фото на месте
+          var sw = rnd(lit);
+          show(sw, choosePhoto([sw._idx]));
+        } else {
+          // зажечь пустую (держим 4–6 видимых)
+          if (dark.length && lit.length < 6 && (lit.length < 4 || Math.random() < 0.8)) {
+            show(rnd(dark), choosePhoto());
+          }
+          // и погасить одну из показанных, чуть позже — чтобы не синхронно
+          if (litSlots().length > 4) {
+            var t = rnd(litSlots());
+            window.setTimeout(function () { if (litSlots().length > 4) hide(t); }, 500 + Math.random() * 1000);
+          }
+        }
+        schedule();
+      }
+
+      function schedule() { window.setTimeout(tick, 2800 + Math.random() * 3200); }
+      schedule();
+    })();
+  </script>
+</main>
