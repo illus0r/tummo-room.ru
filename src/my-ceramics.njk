@@ -130,12 +130,22 @@ title: Моя керамика — Tummo Room
   // фоны и фото этажей — из src/_data/myCeramics.js
   var FLOOR_BGS = window.MY_CERAMICS.bgs;
   var FLOOR_PHOTOS = window.MY_CERAMICS.floors;
+  // пропорции снимков (ширина/высота) — загружаем заранее, чтобы размер места совпадал со снимком
   var ASPECT = {};
+  FLOOR_PHOTOS.forEach(function (list) {
+    list.forEach(function (src) {
+      if (src in ASPECT) return;
+      ASPECT[src] = 0;
+      var im = new Image();
+      im.onload = function () { ASPECT[src] = im.naturalWidth / im.naturalHeight; };
+      im.src = src;
+    });
+  });
 
   var DEF = {
     // фото
     cols:10, tickMs:650, holdMs:4650, fadeMs:1150, maxPhotos:11,
-    tolPct:45, minU:3, maxU:6, attempts:13, iters:8,
+    minU:2, maxU:6, attempts:13, iters:8,
     // текст (в клетках сетки)
     txtCols:5, txtGapRows:3, txtInsetCols:2, txtStartRows:4,
     txtScale:143, txtAlign:0, txtBgOn:true, txtBgOpacity:0,
@@ -150,11 +160,10 @@ title: Моя керамика — Tummo Room
     ['holdMs',  'показ, мс',  150,6000,50, 'Сколько времени фотография держится на экране в полной видимости, прежде чем начать растворяться.'],
     ['fadeMs',  'фейд, мс',    40,2600,10, 'Длительность плавного проявления и растворения каждой фотографии.'],
     ['maxPhotos','фото разом',  1, 18, 1, 'Максимум фотографий, одновременно видимых на экране.'],
-    ['tolPct',  'допуск, %',    2, 60, 1, 'Насколько пропорции прямоугольника-места могут отличаться от пропорций самого снимка. Больше — допускается более заметная обрезка кадра.'],
-    ['minU',    'мин. сторона', 1, 14, 1, 'Наименьшая сторона прямоугольника под фото, в клетках. Ограничивает снизу размер вспышек.'],
-    ['maxU',    'макс. сторона',2, 22, 1, 'Наибольшая сторона прямоугольника под фото, в клетках. Поднимите, чтобы фотографии могли быть крупнее.'],
+    ['minU',    'мин. ширина',  1, 14, 1, 'Наименьшая ширина фото, в клетках. Высота считается по пропорциям снимка, поэтому фото не обрезаются.'],
+    ['maxU',    'макс. ширина', 2, 22, 1, 'Наибольшая ширина фото, в клетках. Поднимите, чтобы фотографии могли быть крупнее.'],
     ['attempts','перебор/тик',  6,120, 1, 'Сколько случайных прямоугольников система проверяет за один тик, подбирая свободное подходящее место.'],
-    ['iters',   'итераций',     1, 40, 1, 'Из скольких подходящих вариантов выбирается лучший — по площади и точности пропорций. Больше — крупнее и аккуратнее кадрирование.']
+    ['iters',   'итераций',     1, 40, 1, 'Из скольких подходящих вариантов выбирается лучший — по площади. Больше — фото в среднем крупнее.']
   ];
   var TEXT_SPEC = [
     ['txtCols',     'ширина, клеток',        1, 14, 1, 'Ширина каждого текстового блока в клетках сетки.'],
@@ -165,7 +174,7 @@ title: Моя керамика — Tummo Room
     ['txtBgOpacity','фон подложки, %',       0, 40, 1, 'Непрозрачность светлой плашки под текстом. 0 — плашки не видно, даже если она включена.']
   ];
   var FLOOR_SPEC = [
-    ['parallax', 'параллакс фона, %', 0, 100, 1, 'Насколько фон этажа отстаёт от страницы при прокрутке. 0 — фон едет вместе со всем, 100 — заметно отстаёт, создавая глубину.'],
+    ['parallax', 'параллакс фона, %', 0, 100, 1, 'Насколько фон этажа отстаёт от страницы при прокрутке. 0 — фон едет вместе со всем, 100 — фон стоит на месте, а этаж проезжает над ним, как в окне.'],
     ['floorDim', 'затемнение фона, %', 0, 92, 1, 'Насколько притушен фоновый снимок этажа. Больше — темнее фон, лучше читаются текст и вспышки поверх него.']
   ];
 
@@ -244,7 +253,7 @@ title: Моя керамика — Tummo Room
     floors = [];
     if (isMobile() || !floorBands.length) return;
     var cell = field.clientWidth / cfg.cols;
-    var par = cfg.parallax / 100 * 150;
+    var k = cfg.parallax / 100;
     floorBands.forEach(function (b, i) {
       var el = document.createElement('div');
       el.className = 'v9-floor';
@@ -252,15 +261,14 @@ title: Моя керамика — Tummo Room
       el.style.height = ((b.e - b.s) * cell) + 'px';
       var bg = new Image();
       bg.className = 'bg'; bg.alt = '';
-      bg.style.top = (-par) + 'px';
-      bg.style.height = 'calc(100% + ' + (2 * par) + 'px)';
+      bg.style.top = '0';
       bg.src = FLOOR_BGS[i % FLOOR_BGS.length];
       var dim = document.createElement('div');
       dim.className = 'dim';
       dim.style.opacity = cfg.floorDim / 100;
       el.appendChild(bg); el.appendChild(dim);
       field.insertBefore(el, field.firstChild);
-      floors.push({ el: el, bg: bg, par: par });
+      floors.push({ el: el, bg: bg, k: k });
     });
     onScroll();
   }
@@ -271,9 +279,10 @@ title: Моя керамика — Tummo Room
     for (var i = 0; i < floors.length; i++) {
       var f = floors[i];
       var r = f.el.getBoundingClientRect();
-      var p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
-      if (p > 1) p = 1; if (p < -1) p = -1;
-      f.bg.style.transform = 'translateY(' + (-p * f.par).toFixed(1) + 'px)';
+      // k=0 — фон едет с этажом, k=1 — фон неподвижен и высотой в экран;
+      // между ними смешиваем, так что видимая часть этажа всегда закрыта фоном
+      f.bg.style.height = (r.height * (1 - f.k) + vh * f.k).toFixed(1) + 'px';
+      f.bg.style.transform = 'translateY(' + (-f.k * r.top).toFixed(1) + 'px)';
     }
   }
 
@@ -289,8 +298,6 @@ title: Моя керамика — Tummo Room
     if (active.length >= cfg.maxPhotos) return;
     var W = field.clientWidth, H = field.clientHeight;
     var cell = W / cfg.cols;
-    var rows = Math.max(1, Math.floor(H / cell));
-    var tol = cfg.tolPct / 100;
     var vTop = window.scrollY - field.offsetTop;
     var b0 = Math.max(0, vTop - 0.25 * window.innerHeight);
     var b1 = Math.min(H, vTop + 1.25 * window.innerHeight);
@@ -305,31 +312,26 @@ title: Моя керамика — Tummo Room
       var name = pool[(Math.random() * pool.length) | 0];
       if (active.some(function (p) { return p.name === name; })) continue;
       if (recent.indexOf(name) >= 0 && pool.length > active.length + recent.length) continue;
-      var pa = ASPECT[name] || 2 / 3;
-      var hU = ri(cfg.minU, cfg.maxU);
-      var wU = Math.round(pa * hU + (Math.random() * 1.4 - 0.7));
-      if (wU < 1) wU = 1;
-      if (wU > cfg.cols || hU > rows) continue;
-      var aspect = wU / hU;
-      var aspErr = Math.abs(aspect - pa) / pa;
-      if (aspErr > tol) continue;
+      var pa = ASPECT[name];
+      if (!pa) continue; // пропорции ещё не загрузились
+      // ширина — целые клетки, высота — по пропорциям снимка, верх — на линии сетки
+      var wU = ri(cfg.minU, Math.min(cfg.maxU, cfg.cols));
+      var hPx = wU * cell / pa;
+      if (hPx > H) continue;
       var xU = ri(0, cfg.cols - wU);
-      var yLo = b0, yHi = b1 - hU * cell;
-      if (yHi <= yLo) { yLo = 0; yHi = H - hU * cell; }
-      if (yHi < 0) continue;
+      var yLo = b0, yHi = b1 - hPx;
+      if (yHi <= yLo) { yLo = 0; yHi = H - hPx; }
       var yU = Math.round((yLo + Math.random() * (yHi - yLo)) / cell);
-      if (yU < 0) yU = 0;
-      if (yU > rows - hU) yU = rows - hU;
-      var rect = { l: xU * cell, t: yU * cell, r: (xU + wU) * cell, b: (yU + hU) * cell };
+      if (yU * cell + hPx > H) yU = Math.floor((H - hPx) / cell);
+      if (yU < 0) continue;
+      var rect = { l: xU * cell, t: yU * cell, r: (xU + wU) * cell, b: yU * cell + hPx };
       var bad = false, i;
       for (i = 0; i < textRects.length; i++) if (hit(rect, textRects[i], 0)) { bad = true; break; }
       if (bad) continue;
       for (i = 0; i < active.length; i++) if (hit(rect, active[i], 2)) { bad = true; break; }
       if (bad) continue;
       found++;
-      var area = wU * hU;
-      var norm = tol > 0 ? Math.min(1, aspErr / tol) : 0;
-      var f = area * (1 - 0.6 * norm);
+      var f = wU * hPx;
       if (f > bestF) { bestF = f; best = { name: name, rect: rect }; }
     }
     if (best) place(best.name, best.rect);
@@ -344,9 +346,6 @@ title: Моя керамика — Tummo Room
     img.style.width = (rect.r - rect.l) + 'px';
     img.style.height = (rect.b - rect.t) + 'px';
     img.style.setProperty('--fade', cfg.fadeMs + 'ms');
-    img.onload = function () {
-      if (img.naturalWidth && img.naturalHeight) ASPECT[name] = img.naturalWidth / img.naturalHeight;
-    };
     img.src = name;
     field.appendChild(img);
     var e = { el: img, name: name, l: rect.l, t: rect.t, r: rect.r, b: rect.b };
