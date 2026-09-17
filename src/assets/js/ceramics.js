@@ -1,14 +1,14 @@
 // Страница «Моя керамика»: этажи с фонами, вспышки фото (компьютер), смена фото между абзацами (телефон).
-// Данные (фоны, фото, пропорции) — window.MY_CERAMICS из src/_data/myCeramics.js.
-// Панель настроек — my-ceramics-tuner.js, грузится только с ?tune (см. в конце файла).
+// Данные (фоны, фото, пропорции) — window.CERAMICS из src/_data/ceramics.js.
+// Панель настроек — ceramics-tuner.js, грузится только с ?tune (см. в конце файла).
 (function () {
   var field = document.getElementById('mc');
   var footer = document.getElementById('mc-footer');
   var logo = document.getElementById('mc-logo');
 
-  var FLOOR_BGS = window.MY_CERAMICS.bgs;
-  var FLOOR_PHOTOS = window.MY_CERAMICS.floors;
-  var ASPECT = window.MY_CERAMICS.aspects;
+  var FLOOR_BGS = window.CERAMICS.bgs;
+  var FLOOR_PHOTOS = window.CERAMICS.floors;
+  var ASPECT = window.CERAMICS.aspects;
 
   // размеры — в клетках квадратной сетки: ширина страницы / cols
   var cfg = {
@@ -281,7 +281,7 @@
     else if (tune !== null) localStorage.setItem('tummo-tune', '1');
     if (localStorage.getItem('tummo-tune')) {
       var s = document.createElement('script');
-      s.src = '/assets/js/my-ceramics-tuner.js';
+      s.src = '/assets/js/ceramics-tuner.js';
       document.body.appendChild(s);
     }
   } catch (e) {}

@@ -2,7 +2,7 @@
 // floors[i] — фото из папки i+1, а если её нет — из общей папки all.
 const fs = require("fs");
 
-const DIR = "src/assets/img/my-ceramics";
+const DIR = "src/assets/img/ceramics";
 
 // пропорции (ширина/высота) из заголовка webp — чтобы странице не скачивать фото ради размеров
 function webpAspect(file) {
@@ -18,7 +18,7 @@ function webpAspect(file) {
 }
 const list = (sub) =>
   fs.existsSync(`${DIR}/${sub}`)
-    ? fs.readdirSync(`${DIR}/${sub}`).filter((f) => f.endsWith(".webp")).map((f) => `/assets/img/my-ceramics/${sub}/${f}`)
+    ? fs.readdirSync(`${DIR}/${sub}`).filter((f) => f.endsWith(".webp")).map((f) => `/assets/img/ceramics/${sub}/${f}`)
     : [];
 
 module.exports = () => ({

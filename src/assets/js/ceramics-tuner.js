@@ -1,10 +1,10 @@
 // Панель настроек страницы «Моя керамика». В обычном режиме не загружается:
-// включается через ?tune, выключается через ?tune=0 (см. конец my-ceramics.js).
+// включается через ?tune, выключается через ?tune=0 (см. конец ceramics.js).
 (function () {
   var MC = window.MC;
   var cfg = MC.cfg, field = MC.field;
   var DEF = Object.assign({}, cfg);
-  var STORE = 'tummo-my-ceramics-cfg';
+  var STORE = 'tummo-ceramics-cfg';
   // только для отладки: сетка и фото без обрезки
   DEF.showGrid = false;
   DEF.uncrop = false;
@@ -148,7 +148,7 @@
     panel.appendChild(button('сохранить настройки', function () {
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' }));
-      a.download = 'my-ceramics-settings.json';
+      a.download = 'ceramics-settings.json';
       a.click();
     }));
     panel.appendChild(button('загрузить настройки', function () {
