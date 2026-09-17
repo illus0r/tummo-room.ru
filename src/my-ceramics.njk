@@ -24,6 +24,8 @@ title: Моя керамика — Tummo Room
   .v7-photo{position:absolute;z-index:1;object-fit:cover;opacity:0;
     transition:opacity var(--fade,1150ms) ease-in-out;will-change:opacity}
   .v7-photo.on{opacity:1}
+  /* ДЕБАГ «фото без обрезки» — удалить вместе с uncrop в скрипте */
+  .v7-field.uncrop .v7-photo{object-fit:contain;outline:1px dashed rgba(217,197,174,.5)}
 
   .v7-dbg{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.16;
     background-image:
@@ -139,7 +141,8 @@ title: Моя керамика — Tummo Room
     txtScale:143, txtAlign:0, txtBgOn:true, txtBgOpacity:0,
     // этажи
     parallax:45, floorDim:55,
-    paused:false, showGrid:false
+    paused:false, showGrid:false,
+    uncrop:false // ДЕБАГ
   };
   var PHOTO_SPEC = [
     ['cols',    'колонок',      6, 28, 1, 'На сколько столбцов делится ширина страницы. Задаёт размер клетки — к ней привязаны и фотографии, и текстовые блоки, и границы этажей.'],
@@ -275,6 +278,7 @@ title: Моя керамика — Tummo Room
   }
 
   var active = [];
+  var recent = []; // недавно исчезнувшие — чтобы не показывать их сразу снова
   function hit(a, b, pad) {
     pad = pad || 0;
     return !(a.r + pad <= b.l || a.l - pad >= b.r || a.b + pad <= b.t || a.t - pad >= b.b);
@@ -300,6 +304,7 @@ title: Моя керамика — Tummo Room
     for (var k = 0; k < cfg.attempts && found < cfg.iters; k++) {
       var name = pool[(Math.random() * pool.length) | 0];
       if (active.some(function (p) { return p.name === name; })) continue;
+      if (recent.indexOf(name) >= 0 && pool.length > active.length + recent.length) continue;
       var pa = ASPECT[name] || 2 / 3;
       var hU = ri(cfg.minU, cfg.maxU);
       var wU = Math.round(pa * hU + (Math.random() * 1.4 - 0.7));
@@ -356,6 +361,8 @@ title: Моя керамика — Tummo Room
         img.remove();
         var i = active.indexOf(e);
         if (i >= 0) active.splice(i, 1);
+        recent.push(name);
+        if (recent.length > 6) recent.shift();
       }, cfg.fadeMs + 60);
     }, cfg.holdMs + cfg.fadeMs);
   }
@@ -374,7 +381,10 @@ title: Моя керамика — Tummo Room
     dbg.style.setProperty('--ch', cw + 'px');
   }
 
-  function apply() { layoutText(); buildFloors(); drawGrid(); }
+  function apply() {
+    layoutText(); buildFloors(); drawGrid();
+    field.classList.toggle('uncrop', !!cfg.uncrop); // ДЕБАГ
+  }
 
   // ---- панель ----
   function head(txt) { var d = document.createElement('div'); d.className = 'v7-head'; d.textContent = txt; return d; }
@@ -413,6 +423,12 @@ title: Моя керамика — Tummo Room
     var s = document.createElement('span'); s.textContent = label;
     wrap.appendChild(inp); wrap.appendChild(s); return wrap;
   }
+  function button(label, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
   function buildPanel() {
     panel.innerHTML = '';
     panel.appendChild(head('ФОТО'));
@@ -428,10 +444,27 @@ title: Моя керамика — Tummo Room
     panel.appendChild(head('ОБЩЕЕ'));
     panel.appendChild(check('paused', 'пауза', 'Остановить появление новых фотографий-вспышек.'));
     panel.appendChild(check('showGrid', 'показать сетку', 'Показать служебную сетку из клеток — удобно при настройке раскладки.'));
-    var reset = document.createElement('button');
-    reset.type = 'button'; reset.textContent = 'сбросить';
-    reset.addEventListener('click', function () { cfg = Object.assign({}, DEF); save(); buildPanel(); apply(); });
-    panel.appendChild(reset);
+    panel.appendChild(check('uncrop', 'фото без обрезки (дебаг)', 'Показывать фотографии целиком, без кадрирования, с пунктирной рамкой места.')); // ДЕБАГ
+    panel.appendChild(button('сохранить настройки', function () {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' }));
+      a.download = 'my-ceramics-settings.json';
+      a.click();
+    }));
+    panel.appendChild(button('загрузить настройки', function () {
+      var inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = '.json,application/json';
+      inp.onchange = function () {
+        inp.files[0].text().then(function (t) {
+          var o = JSON.parse(t);
+          cfg = Object.assign({}, DEF);
+          for (var k in DEF) if (k in o) cfg[k] = o[k];
+          save(); buildPanel(); apply();
+        }).catch(function () { alert('Не получилось прочитать файл настроек'); });
+      };
+      inp.click();
+    }));
+    panel.appendChild(button('сбросить', function () { cfg = Object.assign({}, DEF); save(); buildPanel(); apply(); }));
   }
   toggle.addEventListener('click', function () {
     panel.hidden = !panel.hidden;
