@@ -54,13 +54,29 @@ title: Моя керамика — Tummo Room
     color:#d9c5ae;border:0;border-radius:6px;padding:6px;font:inherit;cursor:pointer}
   .v7-panel button:hover{background:rgba(217,197,174,.2)}
 
+  .v7-foot{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2.5rem;
+    font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1))}
+  .v7-foot nav{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem}
+  .v7-foot a{opacity:.75;transition:opacity .2s}
+  .v7-foot a:hover{opacity:1}
+
+  /* мобильная версия: фото между абзацами */
+  .m-slot{display:none}
+
   @media (max-width:767px){
     .v7-field{height:auto!important;overflow:visible;padding:1.2rem 0 2.5rem}
     .v9-floor{display:none!important}
     .v7-text{position:relative!important;inset:auto!important;width:auto!important;
       margin:1.7rem auto 0!important;max-width:34rem;padding:0 1.35rem!important;
-      background:none!important;font-size:clamp(14px,4vw,17px)!important}
+      background:none!important;font-size:clamp(17px,4.8vw,20px)!important}
     .v7-fixed{position:static!important;inset:auto!important;display:block;margin:.5rem 1.35rem}
+    .v7-foot{display:flex;flex-direction:column;align-items:flex-start;gap:1rem;
+      margin:3.5rem 1.35rem 0!important;padding-top:1.6rem;border-top:1px solid rgba(217,197,174,.15);
+      font-size:clamp(17px,4.8vw,20px)}
+    /* место под фото одной высоты, фото вписывается целиком — страница не скачет */
+    .m-slot{display:flex;align-items:center;justify-content:center;height:min(112vw,620px);margin-top:2.2rem}
+    .m-slot img{max-width:74%;max-height:100%;opacity:0;transition:opacity var(--fade,1150ms) ease-in-out}
+    .m-slot img.on{opacity:1}
     .v7-photo,.v7-dbg,.v7-toggle,.v7-panel{display:none!important}
   }
   @media (prefers-reduced-motion:reduce){.v7-photo{transition:opacity 200ms linear}}
@@ -75,11 +91,15 @@ title: Моя керамика — Tummo Room
     Привет, меня зовут Оля, и я создаю керамику для китайского чая в своей мастерской в городе Волгограде
   </div>
 
+  <div class="m-slot" data-slot><img alt=""></div>
+
   <div class="v7-text" data-txt>
     Природа — моё главное вдохновение. Моё главное стремление — это естественность форм и палитры.
     Чтобы пиалы, которые я создаю, не отвлекали от их главного содержания — чая. Чтобы дополняли его
     и помогали возвращаться вниманием к себе, в настоящий момент
   </div>
+
+  <div class="m-slot" data-slot><img alt=""></div>
 
   <div class="v7-text" data-txt>
     Хочу, чтобы в моей керамике был баланс естественного и рукотворного. Ведь глина, компоненты
@@ -87,11 +107,15 @@ title: Моя керамика — Tummo Room
     форму, сохраняя небрежную асимметрию природных фактур
   </div>
 
+  <div class="m-slot" data-slot><img alt=""></div>
+
   <div class="v7-text" data-txt>
     Моя керамика для тех, кто любит остановиться на прогулке в лесу и вдохнуть полной грудью,
     рассмотреть кору и понаблюдать за замысловатой игрой теней от листвы на земле. Для тех, кто хочет
     вынырнуть из суеты будней, замедлиться и увидеть красоту мира
   </div>
+
+  <div class="m-slot" data-slot><img alt=""></div>
 
   <div class="v7-text buy" data-txt>
     Купить керамику можно во ВКонтакте —
@@ -108,8 +132,16 @@ title: Моя керамика — Tummo Room
     </div>
   </div>
 
-  <a href="/" class="v7-fixed" data-fixed id="v7back"
-     style="left:2.1rem;font-size:.82rem;opacity:.55">← На главную</a>
+  <footer class="v7-fixed v7-foot" data-fixed id="v7back" style="left:2.1rem;right:2.1rem;bottom:1.8rem">
+    <nav>
+      <a href="/">Главная</a>
+      <a href="/workshops/">Мастерклассы и коворкинг</a>
+    </nav>
+    <nav>
+      <a href="https://vk.ru/tummo_room">ВКонтакте</a>
+      <a href="https://t.me/Librocubic">Telegram</a>
+    </nav>
+  </footer>
 
   <div class="v7-dbg" id="v7dbg" hidden></div>
 </main>
@@ -130,27 +162,17 @@ title: Моя керамика — Tummo Room
   // фоны и фото этажей — из src/_data/myCeramics.js
   var FLOOR_BGS = window.MY_CERAMICS.bgs;
   var FLOOR_PHOTOS = window.MY_CERAMICS.floors;
-  // пропорции снимков (ширина/высота) — загружаем заранее, чтобы размер места совпадал со снимком
-  var ASPECT = {};
-  FLOOR_PHOTOS.forEach(function (list) {
-    list.forEach(function (src) {
-      if (src in ASPECT) return;
-      ASPECT[src] = 0;
-      var im = new Image();
-      im.onload = function () { ASPECT[src] = im.naturalWidth / im.naturalHeight; };
-      im.src = src;
-    });
-  });
+  var ASPECT = window.MY_CERAMICS.aspects; // пропорции снимков (ширина/высота), посчитаны при сборке
 
   var DEF = {
     // фото
-    cols:10, tickMs:650, holdMs:4650, fadeMs:1150, maxPhotos:11,
-    minU:2, maxU:6, attempts:13, iters:8,
+    cols:12, tickMs:650, holdMs:4650, fadeMs:1150, maxPhotos:11,
+    minU:3, maxU:6, attempts:36, iters:8,
     // текст (в клетках сетки)
-    txtCols:5, txtGapRows:3, txtInsetCols:2, txtStartRows:4,
-    txtScale:143, txtAlign:0, txtBgOn:true, txtBgOpacity:0,
+    txtCols:6, txtGapRows:4, txtInsetCols:2, txtStartRows:4,
+    txtScale:170, txtAlign:0, txtBgOn:true, txtBgOpacity:0,
     // этажи
-    parallax:45, floorDim:55,
+    parallax:67, floorDim:70,
     paused:false, showGrid:false,
     uncrop:false // ДЕБАГ
   };
@@ -227,9 +249,9 @@ title: Моя керамика — Tummo Room
     });
     rowCursor -= cfg.txtGapRows;
     var tailRows = Math.max(2, cfg.txtGapRows);
-    var fieldH = Math.max((rowCursor + tailRows) * cell, window.innerHeight);
+    // футер прибит к низу (bottom в разметке), оставляем под него место
+    var fieldH = Math.max((rowCursor + tailRows) * cell, rowCursor * cell + cell + backlink.offsetHeight + cell, window.innerHeight);
     field.style.height = fieldH + 'px';
-    backlink.style.top = (rowCursor * cell + cell) + 'px';
     gridRows = Math.max(1, Math.round(fieldH / cell));
 
     var lg = field.querySelector('[data-fixed]');
@@ -262,13 +284,12 @@ title: Моя керамика — Tummo Room
       var bg = new Image();
       bg.className = 'bg'; bg.alt = '';
       bg.style.top = '0';
-      bg.src = FLOOR_BGS[i % FLOOR_BGS.length];
       var dim = document.createElement('div');
       dim.className = 'dim';
       dim.style.opacity = cfg.floorDim / 100;
       el.appendChild(bg); el.appendChild(dim);
       field.insertBefore(el, field.firstChild);
-      floors.push({ el: el, bg: bg, k: k });
+      floors.push({ el: el, bg: bg, k: k, src: FLOOR_BGS[i % FLOOR_BGS.length] });
     });
     onScroll();
   }
@@ -279,6 +300,8 @@ title: Моя керамика — Tummo Room
     for (var i = 0; i < floors.length; i++) {
       var f = floors[i];
       var r = f.el.getBoundingClientRect();
+      // фон грузим, когда этаж ближе экрана к видимой области
+      if (!f.bg.src && r.top < vh * 2 && r.bottom > -vh) f.bg.src = f.src;
       // k=0 — фон едет с этажом, k=1 — фон неподвижен и высотой в экран;
       // между ними смешиваем, так что видимая часть этажа всегда закрыта фоном
       f.bg.style.height = (r.height * (1 - f.k) + vh * f.k).toFixed(1) + 'px';
@@ -346,15 +369,17 @@ title: Моя керамика — Tummo Room
     img.style.width = (rect.r - rect.l) + 'px';
     img.style.height = (rect.b - rect.t) + 'px';
     img.style.setProperty('--fade', cfg.fadeMs + 'ms');
-    img.src = name;
-    field.appendChild(img);
+    // место занимаем сразу, а показываем фото, только когда оно загрузилось
     var e = { el: img, name: name, l: rect.l, t: rect.t, r: rect.r, b: rect.b };
     active.push(e);
-    // eslint-disable-next-line no-unused-expressions
-    img.offsetWidth;
-    setTimeout(function () { img.classList.add('on'); }, 20);
-    if (reduce) return;
-    e.t1 = setTimeout(function () {
+    img.onerror = function () { active.splice(active.indexOf(e), 1); };
+    img.onload = function () {
+      field.appendChild(img);
+      setTimeout(function () { img.classList.add('on'); }, 20);
+      if (!reduce) hide();
+    };
+    img.src = name;
+    function hide() { e.t1 = setTimeout(function () {
       img.classList.remove('on');
       e.t2 = setTimeout(function () {
         img.remove();
@@ -363,8 +388,51 @@ title: Моя керамика — Tummo Room
         recent.push(name);
         if (recent.length > 6) recent.shift();
       }, cfg.fadeMs + 60);
-    }, cfg.holdMs + cfg.fadeMs);
+    }, cfg.holdMs + cfg.fadeMs); }
   }
+
+  // ---- мобильная версия: по одному фото между абзацами, меняются по очереди в случайном месте ----
+  var slots = [].slice.call(field.querySelectorAll('[data-slot]')).map(function (el) {
+    return { img: el.querySelector('img') };
+  });
+  // первое фото ставим, когда место подъезжает к экрану; смена — только в видимых местах
+  // и только когда новое фото уже загрузилось, чтобы место не пустовало
+  function swapSlot(i) {
+    var sl = slots[i];
+    var pool = FLOOR_PHOTOS[i] || [];
+    var shown = slots.map(function (x) { return x.name; });
+    var free = pool.filter(function (n) { return shown.indexOf(n) < 0; });
+    if (!free.length || sl.busy) return;
+    var name = free[(Math.random() * free.length) | 0];
+    sl.img.style.setProperty('--fade', cfg.fadeMs + 'ms');
+    if (!sl.name) {
+      sl.name = name;
+      sl.img.onload = function () { sl.img.classList.add('on'); };
+      sl.img.src = name;
+      return;
+    }
+    sl.busy = true;
+    var next = new Image();
+    next.onerror = function () { sl.busy = false; };
+    next.onload = function () {
+      sl.name = name;
+      sl.img.classList.remove('on');
+      setTimeout(function () { sl.img.src = name; sl.busy = false; }, cfg.fadeMs);
+    };
+    next.src = name;
+  }
+  function slotVisible(sl) {
+    var r = sl.img.parentNode.getBoundingClientRect();
+    return r.bottom > -window.innerHeight / 2 && r.top < window.innerHeight * 1.5;
+  }
+  function fillSlots() {
+    if (isMobile()) slots.forEach(function (sl, i) { if (!sl.name && slotVisible(sl)) swapSlot(i); });
+  }
+  setInterval(function () {
+    if (!isMobile() || cfg.paused || reduce || document.hidden) return;
+    var vis = slots.filter(slotVisible);
+    if (vis.length) swapSlot(slots.indexOf(vis[(Math.random() * vis.length) | 0]));
+  }, 3500);
 
   var timer = null;
   function loop() {
@@ -382,6 +450,7 @@ title: Моя керамика — Tummo Room
 
   function apply() {
     layoutText(); buildFloors(); drawGrid();
+    fillSlots();
     field.classList.toggle('uncrop', !!cfg.uncrop); // ДЕБАГ
   }
 
@@ -492,7 +561,7 @@ title: Моя керамика — Tummo Room
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(apply, 130); });
   window.addEventListener('scroll', function () {
     if (window.rq) return;
-    window.rq = requestAnimationFrame(function () { window.rq = 0; onScroll(); });
+    window.rq = requestAnimationFrame(function () { window.rq = 0; onScroll(); fillSlots(); });
   }, { passive: true });
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden && !reduce && timer == null) loop();
