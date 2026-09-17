@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "photos": "sh scripts/photos.sh",
     "build:css": "tailwindcss -i src/assets/css/input.css -o _site/assets/css/style.css --minify",
     "build:11ty": "eleventy",
-    "build": "npm run build:css && npm run build:11ty",
+    "build": "pnpm run build:css && pnpm run build:11ty",
     "dev:css": "tailwindcss -i src/assets/css/input.css -o _site/assets/css/style.css --watch",
     "dev:11ty": "eleventy --serve",
-    "dev": "npm run dev:css & npm run dev:11ty"
+    "dev": "pnpm run dev:css & pnpm run dev:11ty",
+    "check-site": "node .claude/skills/check-site/scripts/check-site.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +28,9 @@
     "@11ty/eleventy": "^3.1.5",
     "@tailwindcss/cli": "^4.2.2",
     "tailwindcss": "^4.2.2"
-  }
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.0.0"
+  },
+  "packageManager": "pnpm@11.9.0"
 }
