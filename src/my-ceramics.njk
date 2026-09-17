@@ -4,124 +4,95 @@ title: Моя керамика — Tummo Room
 ---
 
 <style>
-  .v7-field{position:relative;width:100%;background:#171717;overflow:hidden}
+  .mc{position:relative;width:100%;background:#171717;overflow:hidden}
 
-  .v9-floor{position:absolute;left:0;right:0;overflow:hidden;z-index:0}
-  .v9-floor .bg{position:absolute;left:0;width:100%;object-fit:cover;
-    will-change:transform;filter:saturate(.9)}
-  .v9-floor .dim{position:absolute;inset:0;background:#171717}
+  /* этажи с фонами (компьютер) */
+  .mc-floor{position:absolute;left:0;right:0;overflow:hidden;z-index:0}
+  .mc-floor-bg{position:absolute;top:0;left:0;width:100%;object-fit:cover;will-change:transform;filter:saturate(.9)}
+  .mc-floor-dim{position:absolute;inset:0;background:#171717}
 
-  .v7-text{position:absolute;z-index:2;color:#d9c5ae;font-weight:300;line-height:1.55;
+  .mc-text{position:absolute;z-index:2;color:#d9c5ae;font-weight:300;line-height:1.55;
     font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1));box-sizing:border-box}
-  .v7-text.hl{background:rgba(217,197,174,var(--tbg,.06));padding:1.05em 1.2em;border-radius:2px}
-  .v7-text .buy{font-size:.92em}
-  .v7-text .muted{opacity:.5}
-  .v7-text a{text-decoration:underline;text-underline-offset:4px;
+  .mc-text.hl{background:rgba(217,197,174,var(--tbg,.06));padding:1.05em 1.2em;border-radius:2px}
+  .mc-text .muted{opacity:.5}
+  .mc-text a{text-decoration:underline;text-underline-offset:4px;
     text-decoration-thickness:1px;text-decoration-color:rgba(217,197,174,.4)}
-  .v7-text a:hover{text-decoration-color:#d9c5ae}
-  .v7-fixed{position:absolute;z-index:3;color:#d9c5ae;font-weight:300}
+  .mc-text a:hover{text-decoration-color:#d9c5ae}
 
-  .v7-photo{position:absolute;z-index:1;object-fit:cover;opacity:0;
-    transition:opacity var(--fade,1150ms) ease-in-out;will-change:opacity}
-  .v7-photo.on{opacity:1}
-  /* ДЕБАГ «фото без обрезки» — удалить вместе с uncrop в скрипте */
-  .v7-field.uncrop .v7-photo{object-fit:contain;outline:1px dashed rgba(217,197,174,.5)}
+  .mc-logo{position:absolute;z-index:3;left:2.1rem;top:1.5rem}
+  .mc-logo img{height:2.6rem;width:auto;display:block}
 
-  .v7-dbg{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.16;
-    background-image:
-      repeating-linear-gradient(to right,#d9c5ae 0 1px,transparent 1px var(--cw,80px)),
-      repeating-linear-gradient(to bottom,#d9c5ae 0 1px,transparent 1px var(--ch,80px))}
-
-  .v7-toggle{position:fixed;top:12px;right:12px;z-index:51;
-    background:rgba(10,10,10,.82);color:#d9c5ae;border:0;border-radius:8px;
-    padding:6px 10px;font:400 13px/1 system-ui,sans-serif;cursor:pointer}
-  .v7-panel{position:fixed;top:50px;right:12px;z-index:50;width:256px;
-    max-width:calc(100vw - 24px);max-height:calc(100vh - 64px);overflow:auto;
-    background:rgba(10,10,10,.9);backdrop-filter:blur(8px);color:#d9c5ae;
-    font:400 12px/1.35 system-ui,sans-serif;border-radius:8px;padding:10px 12px 12px}
-  .v7-panel[hidden]{display:none}
-  .v7-head{margin:12px 0 4px;font-weight:700;letter-spacing:.14em;font-size:10px;opacity:.55}
-  .v7-head:first-child{margin-top:0}
-  .v7-row{margin-top:8px}
-  .v7-row .lbl{display:flex;justify-content:space-between;gap:8px;margin-bottom:2px}
-  .v7-row .lbl span{border-bottom:1px dotted rgba(217,197,174,.35);cursor:help}
-  .v7-row .lbl b{font-weight:600;font-variant-numeric:tabular-nums;opacity:.85}
-  .v7-panel input[type=range]{width:100%;accent-color:#d9c5ae;margin:0}
-  .v7-panel select{width:100%;background:#1c1c1c;color:#d9c5ae;border:1px solid #3a3a3a;
-    border-radius:4px;padding:3px 4px;font:inherit}
-  .v7-check{display:flex;align-items:center;gap:6px;margin-top:9px;cursor:help}
-  .v7-panel button{margin-top:12px;width:100%;background:rgba(217,197,174,.12);
-    color:#d9c5ae;border:0;border-radius:6px;padding:6px;font:inherit;cursor:pointer}
-  .v7-panel button:hover{background:rgba(217,197,174,.2)}
-
-  .v7-foot{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2.5rem;
+  .mc-footer{position:absolute;z-index:3;left:2.1rem;right:2.1rem;bottom:1.8rem;
+    display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2.5rem;color:#d9c5ae;font-weight:300;
     font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1))}
-  .v7-foot nav{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem}
-  .v7-foot a{opacity:.75;transition:opacity .2s}
-  .v7-foot a:hover{opacity:1}
+  .mc-footer nav{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem}
+  .mc-footer a{opacity:.75;transition:opacity .2s}
+  .mc-footer a:hover{opacity:1}
 
-  /* мобильная версия: фото между абзацами */
-  .m-slot{display:none}
+  /* вспышки фото (компьютер) */
+  .mc-photo{position:absolute;z-index:1;object-fit:cover;opacity:0;
+    transition:opacity var(--fade,1150ms) ease-in-out;will-change:opacity}
+  .mc-photo.on{opacity:1}
+
+  /* фото между абзацами (телефон) */
+  .mc-slot{display:none}
 
   @media (max-width:767px){
-    .v7-field{height:auto!important;overflow:visible;padding:1.2rem 0 2.5rem}
-    .v9-floor{display:none!important}
-    .v7-text{position:relative!important;inset:auto!important;width:auto!important;
-      margin:1.7rem auto 0!important;max-width:34rem;padding:0 1.35rem!important;
-      background:none!important;font-size:clamp(17px,4.8vw,20px)!important}
-    .v7-fixed{position:static!important;inset:auto!important;display:block;margin:.5rem 1.35rem}
-    .v7-foot{display:flex;flex-direction:column;align-items:flex-start;gap:1rem;
-      margin:3.5rem 1.35rem 0!important;padding-top:1.6rem;border-top:1px solid rgba(217,197,174,.15);
+    .mc{height:auto!important;overflow:visible;padding:1.2rem 1.35rem 2.5rem}
+    .mc-floor,.mc-photo{display:none!important}
+    .mc-logo{position:static;display:block;margin:.5rem 0}
+    .mc-text{position:relative;width:auto!important;max-width:34rem;margin-top:1.7rem;
       font-size:clamp(17px,4.8vw,20px)}
-    /* место под фото одной высоты, фото вписывается целиком — страница не скачет */
-    .m-slot{display:flex;align-items:center;justify-content:center;height:min(112vw,620px);margin-top:2.2rem}
-    .m-slot img{max-width:74%;max-height:100%;opacity:0;transition:opacity var(--fade,1150ms) ease-in-out}
-    .m-slot img.on{opacity:1}
-    .v7-photo,.v7-dbg,.v7-toggle,.v7-panel{display:none!important}
+    .mc-footer{position:static;flex-direction:column;align-items:flex-start;gap:1rem;
+      margin-top:3.5rem;padding-top:1.6rem;border-top:1px solid rgba(217,197,174,.15);font-size:clamp(17px,4.8vw,20px)}
+    /* место под фото одной высоты, фото вписывается целиком и прижато влево — страница не скачет */
+    .mc-slot{display:flex;align-items:center;height:min(112vw,620px);margin-top:2.2rem}
+    .mc-slot img{max-width:80%;max-height:100%;opacity:0;transition:opacity var(--fade,1150ms) ease-in-out}
+    .mc-slot img.on{opacity:1}
   }
-  @media (prefers-reduced-motion:reduce){.v7-photo{transition:opacity 200ms linear}}
+  @media (prefers-reduced-motion:reduce){.mc-photo,.mc-slot img{transition-duration:200ms}}
 </style>
 
-<main class="v7-field" id="v7field">
-  <a href="/" class="v7-fixed" data-fixed style="left:2.1rem;top:1.5rem">
-    <img src="/assets/img/logo-horizontal.svg" alt="Туммо" style="height:2.6rem;width:auto;display:block">
+<main class="mc" id="mc">
+  <a href="/" class="mc-logo" id="mc-logo">
+    <img src="/assets/img/logo-horizontal.svg" alt="Туммо">
   </a>
 
-  <div class="v7-text" data-txt>
-    Привет, меня зовут Оля, и я создаю керамику для китайского чая в своей мастерской в городе Волгограде
+  <div class="mc-text" data-txt>
+    Привет, меня зовут Оля, и я создаю керамику для китайского чая в своей мастерской в Волгограде
   </div>
 
-  <div class="m-slot" data-slot><img alt=""></div>
+  <div class="mc-slot" data-slot><img alt=""></div>
 
-  <div class="v7-text" data-txt>
+  <div class="mc-text" data-txt>
     Природа — моё главное вдохновение. Моё главное стремление — это естественность форм и палитры.
     Чтобы пиалы, которые я создаю, не отвлекали от их главного содержания — чая. Чтобы дополняли его
     и помогали возвращаться вниманием к себе, в настоящий момент
   </div>
 
-  <div class="m-slot" data-slot><img alt=""></div>
+  <div class="mc-slot" data-slot><img alt=""></div>
 
-  <div class="v7-text" data-txt>
+  <div class="mc-text" data-txt>
     Хочу, чтобы в моей керамике был баланс естественного и рукотворного. Ведь глина, компоненты
     глазурей и жар в печи — это всё элементы природы. И я здесь просто помогаю им найти гармоничную
     форму, сохраняя небрежную асимметрию природных фактур
   </div>
 
-  <div class="m-slot" data-slot><img alt=""></div>
+  <div class="mc-slot" data-slot><img alt=""></div>
 
-  <div class="v7-text" data-txt>
+  <div class="mc-text" data-txt>
     Моя керамика для тех, кто любит остановиться на прогулке в лесу и вдохнуть полной грудью,
     рассмотреть кору и понаблюдать за замысловатой игрой теней от листвы на земле. Для тех, кто хочет
     вынырнуть из суеты будней, замедлиться и увидеть красоту мира
   </div>
 
-  <div class="m-slot" data-slot><img alt=""></div>
+  <div class="mc-slot" data-slot><img alt=""></div>
 
-  <div class="v7-text buy" data-txt>
+  <div class="mc-text" data-txt>
     Купить керамику можно во ВКонтакте —
     <a href="https://vk.ru/tummo_room">vk.ru/tummo_room</a>. А ещё она есть в чайных:
     <div style="margin-top:.6em">
-      <div><span class="muted">Волгоград — </span><a href="https://teaclouds.ru/">Чайные облака</a>, <a href="https://drakonisoroka.ru/">Дракон и сорока</a>, <a href="https://instagram.com/somely_me">Somely</a></div>
+      <div><span class="muted">Волгоград — </span><a href="https://teaclouds.ru/">Облака</a>, <a href="https://drakonisoroka.ru/">Дракон и сорока</a>, <a href="https://instagram.com/somely_me">Somely</a></div>
       <div><span class="muted">Санкт-Петербург — </span><a href="https://vk.ru/tsikadatea">Цикада</a>, <a href="https://чяй.рф/">Чяй</a>, <a href="https://vk.ru/po_putea">По пути</a></div>
       <div><span class="muted">Новосибирск — </span><a href="https://chajen.ru/">Ча жень</a>, <a href="https://vk.ru/2dragons_tea">Два дракона</a></div>
       <div><span class="muted">Краснодар — </span><a href="https://koitea.taplink.ws/">Кои</a></div>
@@ -132,7 +103,7 @@ title: Моя керамика — Tummo Room
     </div>
   </div>
 
-  <footer class="v7-fixed v7-foot" data-fixed id="v7back" style="left:2.1rem;right:2.1rem;bottom:1.8rem">
+  <footer class="mc-footer" id="mc-footer">
     <nav>
       <a href="/">Главная</a>
       <a href="/workshops/">Мастерклассы и коворкинг</a>
@@ -142,435 +113,7 @@ title: Моя керамика — Tummo Room
       <a href="https://t.me/Librocubic">Telegram</a>
     </nav>
   </footer>
-
-  <div class="v7-dbg" id="v7dbg" hidden></div>
 </main>
 
-<button class="v7-toggle" id="v7toggle" aria-label="Параметры">⚙</button>
-<form class="v7-panel" id="v7panel" hidden></form>
-
 <script>window.MY_CERAMICS = {{ myCeramics | dump | safe }};</script>
-{% raw %}
-<script>
-(function () {
-  var field = document.getElementById('v7field');
-  var dbg = document.getElementById('v7dbg');
-  var backlink = document.getElementById('v7back');
-  var panel = document.getElementById('v7panel');
-  var toggle = document.getElementById('v7toggle');
-
-  // фоны и фото этажей — из src/_data/myCeramics.js
-  var FLOOR_BGS = window.MY_CERAMICS.bgs;
-  var FLOOR_PHOTOS = window.MY_CERAMICS.floors;
-  var ASPECT = window.MY_CERAMICS.aspects; // пропорции снимков (ширина/высота), посчитаны при сборке
-
-  var DEF = {
-    // фото
-    cols:12, tickMs:650, holdMs:4650, fadeMs:1150, maxPhotos:11,
-    minU:3, maxU:6, attempts:36, iters:8,
-    // текст (в клетках сетки)
-    txtCols:6, txtGapRows:4, txtInsetCols:2, txtStartRows:4,
-    txtScale:170, txtAlign:0, txtBgOn:true, txtBgOpacity:0,
-    // этажи
-    parallax:67, floorDim:70,
-    paused:false, showGrid:false,
-    uncrop:false // ДЕБАГ
-  };
-  var PHOTO_SPEC = [
-    ['cols',    'колонок',      6, 28, 1, 'На сколько столбцов делится ширина страницы. Задаёт размер клетки — к ней привязаны и фотографии, и текстовые блоки, и границы этажей.'],
-    ['tickMs',  'тик, мс',    120,3000,10, 'Как часто система пытается показать новую фотографию. Меньше значение — вспышки появляются чаще.'],
-    ['holdMs',  'показ, мс',  150,6000,50, 'Сколько времени фотография держится на экране в полной видимости, прежде чем начать растворяться.'],
-    ['fadeMs',  'фейд, мс',    40,2600,10, 'Длительность плавного проявления и растворения каждой фотографии.'],
-    ['maxPhotos','фото разом',  1, 18, 1, 'Максимум фотографий, одновременно видимых на экране.'],
-    ['minU',    'мин. ширина',  1, 14, 1, 'Наименьшая ширина фото, в клетках. Высота считается по пропорциям снимка, поэтому фото не обрезаются.'],
-    ['maxU',    'макс. ширина', 2, 22, 1, 'Наибольшая ширина фото, в клетках. Поднимите, чтобы фотографии могли быть крупнее.'],
-    ['attempts','перебор/тик',  6,120, 1, 'Сколько случайных прямоугольников система проверяет за один тик, подбирая свободное подходящее место.'],
-    ['iters',   'итераций',     1, 40, 1, 'Из скольких подходящих вариантов выбирается лучший — по площади. Больше — фото в среднем крупнее.']
-  ];
-  var TEXT_SPEC = [
-    ['txtCols',     'ширина, клеток',        1, 14, 1, 'Ширина каждого текстового блока в клетках сетки.'],
-    ['txtGapRows',  'между блоками, клеток', 0, 24, 1, 'Вертикальный промежуток между соседними блоками текста, в клетках.'],
-    ['txtInsetCols','отступ от края, клеток',0, 16, 1, 'На сколько клеток блок отступает от левого или правого края страницы.'],
-    ['txtStartRows','первый сверху, клеток', 0, 28, 1, 'Отступ первого блока от верхнего края страницы, в клетках.'],
-    ['txtScale',    'кегль, %',             75,170, 1, 'Размер шрифта в текстовых блоках относительно базового.'],
-    ['txtBgOpacity','фон подложки, %',       0, 40, 1, 'Непрозрачность светлой плашки под текстом. 0 — плашки не видно, даже если она включена.']
-  ];
-  var FLOOR_SPEC = [
-    ['parallax', 'параллакс фона, %', 0, 100, 1, 'Насколько фон этажа отстаёт от страницы при прокрутке. 0 — фон едет вместе со всем, 100 — фон стоит на месте, а этаж проезжает над ним, как в окне.'],
-    ['floorDim', 'затемнение фона, %', 0, 92, 1, 'Насколько притушен фоновый снимок этажа. Больше — темнее фон, лучше читаются текст и вспышки поверх него.']
-  ];
-
-  var cfg = load();
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var isMobile = function () { return window.matchMedia('(max-width:767px)').matches; };
-  var textEls = [].slice.call(field.querySelectorAll('[data-txt]'));
-  var textRects = [];
-  var floorBands = [];
-  var floors = [];
-  var gridRows = 1;
-
-  function layoutText() {
-    if (isMobile()) {
-      textEls.forEach(function (el) {
-        el.style.left = el.style.right = el.style.top = el.style.width = '';
-        el.classList.remove('hl');
-      });
-      field.style.height = '';
-      textRects = []; floorBands = [];
-      return;
-    }
-    var W = field.clientWidth;
-    var cell = W / cfg.cols;
-    var cols = cfg.cols;
-    var tcols = Math.max(1, Math.min(cfg.txtCols, cols - 1));
-    var inset = Math.max(0, Math.min(cfg.txtInsetCols, cols - tcols));
-    field.style.setProperty('--tscale', cfg.txtScale / 100);
-    field.style.setProperty('--tbg', cfg.txtBgOpacity / 100);
-
-    var rowCursor = cfg.txtStartRows;
-    textRects = [];
-    var blockRows = [];
-    textEls.forEach(function (el, i) {
-      el.classList.toggle('hl', !!cfg.txtBgOn);
-      el.style.width = (tcols * cell) + 'px';
-      var toLeft = (cfg.txtAlign === 1) || (cfg.txtAlign === 0 && i % 2 === 0);
-      var colX = toLeft ? inset : (cols - inset - tcols);
-      if (colX < 0) colX = 0;
-      el.style.left = (colX * cell) + 'px';
-      el.style.right = 'auto';
-      el.style.top = (rowCursor * cell) + 'px';
-      var hRows = Math.max(1, Math.ceil(el.offsetHeight / cell));
-      textRects.push({
-        l: colX * cell, t: rowCursor * cell,
-        r: (colX + tcols) * cell, b: (rowCursor + hRows) * cell
-      });
-      blockRows.push({ top: rowCursor, bot: rowCursor + hRows });
-      rowCursor += hRows + cfg.txtGapRows;
-    });
-    rowCursor -= cfg.txtGapRows;
-    var tailRows = Math.max(2, cfg.txtGapRows);
-    // футер прибит к низу (bottom в разметке), оставляем под него место
-    var fieldH = Math.max((rowCursor + tailRows) * cell, rowCursor * cell + cell + backlink.offsetHeight + cell, window.innerHeight);
-    field.style.height = fieldH + 'px';
-    gridRows = Math.max(1, Math.round(fieldH / cell));
-
-    var lg = field.querySelector('[data-fixed]');
-    var lr = lg.getBoundingClientRect(), fr = field.getBoundingClientRect();
-    textRects.push({ l: lr.left - fr.left - 8, t: 0, r: lr.right - fr.left + 8, b: lr.bottom - fr.top + 12 });
-    var brk = backlink.getBoundingClientRect();
-    textRects.push({ l: 0, t: brk.top - fr.top - 8, r: brk.right - fr.left + 12, b: fieldH });
-
-    // границы этажей — по линиям сетки, между абзацами
-    floorBands = [];
-    var starts = [0];
-    for (var i = 1; i < blockRows.length; i++) {
-      starts.push(Math.round((blockRows[i - 1].bot + blockRows[i].top) / 2));
-    }
-    starts.push(gridRows);
-    for (i = 0; i < blockRows.length; i++) floorBands.push({ s: starts[i], e: starts[i + 1] });
-  }
-
-  function buildFloors() {
-    [].slice.call(field.querySelectorAll('.v9-floor')).forEach(function (n) { n.remove(); });
-    floors = [];
-    if (isMobile() || !floorBands.length) return;
-    var cell = field.clientWidth / cfg.cols;
-    var k = cfg.parallax / 100;
-    floorBands.forEach(function (b, i) {
-      var el = document.createElement('div');
-      el.className = 'v9-floor';
-      el.style.top = (b.s * cell) + 'px';
-      el.style.height = ((b.e - b.s) * cell) + 'px';
-      var bg = new Image();
-      bg.className = 'bg'; bg.alt = '';
-      bg.style.top = '0';
-      var dim = document.createElement('div');
-      dim.className = 'dim';
-      dim.style.opacity = cfg.floorDim / 100;
-      el.appendChild(bg); el.appendChild(dim);
-      field.insertBefore(el, field.firstChild);
-      floors.push({ el: el, bg: bg, k: k, src: FLOOR_BGS[i % FLOOR_BGS.length] });
-    });
-    onScroll();
-  }
-
-  function onScroll() {
-    if (!floors.length) return;
-    var vh = window.innerHeight;
-    for (var i = 0; i < floors.length; i++) {
-      var f = floors[i];
-      var r = f.el.getBoundingClientRect();
-      // фон грузим, когда этаж ближе экрана к видимой области
-      if (!f.bg.src && r.top < vh * 2 && r.bottom > -vh) f.bg.src = f.src;
-      // k=0 — фон едет с этажом, k=1 — фон неподвижен и высотой в экран;
-      // между ними смешиваем, так что видимая часть этажа всегда закрыта фоном
-      f.bg.style.height = (r.height * (1 - f.k) + vh * f.k).toFixed(1) + 'px';
-      f.bg.style.transform = 'translateY(' + (-f.k * r.top).toFixed(1) + 'px)';
-    }
-  }
-
-  var active = [];
-  var recent = []; // недавно исчезнувшие — чтобы не показывать их сразу снова
-  function hit(a, b, pad) {
-    pad = pad || 0;
-    return !(a.r + pad <= b.l || a.l - pad >= b.r || a.b + pad <= b.t || a.t - pad >= b.b);
-  }
-  function ri(lo, hi) { if (hi < lo) { var s = lo; lo = hi; hi = s; } return lo + Math.floor(Math.random() * (hi - lo + 1)); }
-
-  function tryPlace() {
-    if (active.length >= cfg.maxPhotos) return;
-    var W = field.clientWidth, H = field.clientHeight;
-    var cell = W / cfg.cols;
-    var vTop = window.scrollY - field.offsetTop;
-    var b0 = Math.max(0, vTop - 0.25 * window.innerHeight);
-    var b1 = Math.min(H, vTop + 1.25 * window.innerHeight);
-    // фото берём из этажа, который сейчас в середине экрана
-    var mid = (vTop + window.innerHeight / 2) / cell, fi = 0;
-    while (fi < floorBands.length - 1 && mid >= floorBands[fi].e) fi++;
-    var pool = FLOOR_PHOTOS[fi] || [];
-    if (!pool.length) return;
-
-    var best = null, bestF = -1, found = 0;
-    for (var k = 0; k < cfg.attempts && found < cfg.iters; k++) {
-      var name = pool[(Math.random() * pool.length) | 0];
-      if (active.some(function (p) { return p.name === name; })) continue;
-      if (recent.indexOf(name) >= 0 && pool.length > active.length + recent.length) continue;
-      var pa = ASPECT[name];
-      if (!pa) continue; // пропорции ещё не загрузились
-      // ширина — целые клетки, высота — по пропорциям снимка, верх — на линии сетки
-      var wU = ri(cfg.minU, Math.min(cfg.maxU, cfg.cols));
-      var hPx = wU * cell / pa;
-      if (hPx > H) continue;
-      var xU = ri(0, cfg.cols - wU);
-      var yLo = b0, yHi = b1 - hPx;
-      if (yHi <= yLo) { yLo = 0; yHi = H - hPx; }
-      var yU = Math.round((yLo + Math.random() * (yHi - yLo)) / cell);
-      if (yU * cell + hPx > H) yU = Math.floor((H - hPx) / cell);
-      if (yU < 0) continue;
-      var rect = { l: xU * cell, t: yU * cell, r: (xU + wU) * cell, b: yU * cell + hPx };
-      var bad = false, i;
-      for (i = 0; i < textRects.length; i++) if (hit(rect, textRects[i], 0)) { bad = true; break; }
-      if (bad) continue;
-      for (i = 0; i < active.length; i++) if (hit(rect, active[i], 2)) { bad = true; break; }
-      if (bad) continue;
-      found++;
-      var f = wU * hPx;
-      if (f > bestF) { bestF = f; best = { name: name, rect: rect }; }
-    }
-    if (best) place(best.name, best.rect);
-  }
-
-  function place(name, rect) {
-    var img = new Image();
-    img.className = 'v7-photo';
-    img.alt = '';
-    img.style.left = rect.l + 'px';
-    img.style.top = rect.t + 'px';
-    img.style.width = (rect.r - rect.l) + 'px';
-    img.style.height = (rect.b - rect.t) + 'px';
-    img.style.setProperty('--fade', cfg.fadeMs + 'ms');
-    // место занимаем сразу, а показываем фото, только когда оно загрузилось
-    var e = { el: img, name: name, l: rect.l, t: rect.t, r: rect.r, b: rect.b };
-    active.push(e);
-    img.onerror = function () { active.splice(active.indexOf(e), 1); };
-    img.onload = function () {
-      field.appendChild(img);
-      setTimeout(function () { img.classList.add('on'); }, 20);
-      if (!reduce) hide();
-    };
-    img.src = name;
-    function hide() { e.t1 = setTimeout(function () {
-      img.classList.remove('on');
-      e.t2 = setTimeout(function () {
-        img.remove();
-        var i = active.indexOf(e);
-        if (i >= 0) active.splice(i, 1);
-        recent.push(name);
-        if (recent.length > 6) recent.shift();
-      }, cfg.fadeMs + 60);
-    }, cfg.holdMs + cfg.fadeMs); }
-  }
-
-  // ---- мобильная версия: по одному фото между абзацами, меняются по очереди в случайном месте ----
-  var slots = [].slice.call(field.querySelectorAll('[data-slot]')).map(function (el) {
-    return { img: el.querySelector('img') };
-  });
-  // первое фото ставим, когда место подъезжает к экрану; смена — только в видимых местах
-  // и только когда новое фото уже загрузилось, чтобы место не пустовало
-  function swapSlot(i) {
-    var sl = slots[i];
-    var pool = FLOOR_PHOTOS[i] || [];
-    var shown = slots.map(function (x) { return x.name; });
-    var free = pool.filter(function (n) { return shown.indexOf(n) < 0; });
-    if (!free.length || sl.busy) return;
-    var name = free[(Math.random() * free.length) | 0];
-    sl.img.style.setProperty('--fade', cfg.fadeMs + 'ms');
-    if (!sl.name) {
-      sl.name = name;
-      sl.img.onload = function () { sl.img.classList.add('on'); };
-      sl.img.src = name;
-      return;
-    }
-    sl.busy = true;
-    var next = new Image();
-    next.onerror = function () { sl.busy = false; };
-    next.onload = function () {
-      sl.name = name;
-      sl.img.classList.remove('on');
-      setTimeout(function () { sl.img.src = name; sl.busy = false; }, cfg.fadeMs);
-    };
-    next.src = name;
-  }
-  function slotVisible(sl) {
-    var r = sl.img.parentNode.getBoundingClientRect();
-    return r.bottom > -window.innerHeight / 2 && r.top < window.innerHeight * 1.5;
-  }
-  function fillSlots() {
-    if (isMobile()) slots.forEach(function (sl, i) { if (!sl.name && slotVisible(sl)) swapSlot(i); });
-  }
-  setInterval(function () {
-    if (!isMobile() || cfg.paused || reduce || document.hidden) return;
-    var vis = slots.filter(slotVisible);
-    if (vis.length) swapSlot(slots.indexOf(vis[(Math.random() * vis.length) | 0]));
-  }, 3500);
-
-  var timer = null;
-  function loop() {
-    if (!cfg.paused && !isMobile() && !document.hidden) tryPlace();
-    timer = setTimeout(loop, cfg.tickMs);
-  }
-
-  function drawGrid() {
-    dbg.hidden = !cfg.showGrid || isMobile();
-    if (dbg.hidden) return;
-    var cw = field.clientWidth / cfg.cols;
-    dbg.style.setProperty('--cw', cw + 'px');
-    dbg.style.setProperty('--ch', cw + 'px');
-  }
-
-  function apply() {
-    layoutText(); buildFloors(); drawGrid();
-    fillSlots();
-    field.classList.toggle('uncrop', !!cfg.uncrop); // ДЕБАГ
-  }
-
-  // ---- панель ----
-  function head(txt) { var d = document.createElement('div'); d.className = 'v7-head'; d.textContent = txt; return d; }
-  function row(s) {
-    var key = s[0], label = s[1], min = s[2], max = s[3], step = s[4], desc = s[5];
-    var wrap = document.createElement('div');
-    wrap.className = 'v7-row';
-    var lbl = document.createElement('div'); lbl.className = 'lbl';
-    var n = document.createElement('span'); n.textContent = label; if (desc) n.title = desc;
-    var v = document.createElement('b'); v.textContent = cfg[key];
-    lbl.appendChild(n); lbl.appendChild(v);
-    var inp = document.createElement('input');
-    inp.type = 'range'; inp.min = min; inp.max = max; inp.step = step; inp.value = cfg[key];
-    if (desc) inp.title = desc;
-    inp.addEventListener('input', function () {
-      cfg[key] = parseFloat(inp.value); v.textContent = cfg[key]; save(); apply();
-    });
-    wrap.appendChild(lbl); wrap.appendChild(inp);
-    return wrap;
-  }
-  function sel(key, label, opts, desc) {
-    var wrap = document.createElement('div'); wrap.className = 'v7-row';
-    var lbl = document.createElement('div'); lbl.className = 'lbl';
-    var n = document.createElement('span'); n.textContent = label; if (desc) n.title = desc;
-    lbl.appendChild(n); wrap.appendChild(lbl);
-    var se = document.createElement('select'); if (desc) se.title = desc;
-    opts.forEach(function (o, i) { var op = document.createElement('option'); op.value = i; op.textContent = o; se.appendChild(op); });
-    se.value = cfg[key];
-    se.addEventListener('change', function () { cfg[key] = parseInt(se.value, 10); save(); apply(); });
-    wrap.appendChild(se); return wrap;
-  }
-  function check(key, label, desc) {
-    var wrap = document.createElement('label'); wrap.className = 'v7-check'; if (desc) wrap.title = desc;
-    var inp = document.createElement('input'); inp.type = 'checkbox'; inp.checked = !!cfg[key];
-    inp.addEventListener('change', function () { cfg[key] = inp.checked; save(); apply(); });
-    var s = document.createElement('span'); s.textContent = label;
-    wrap.appendChild(inp); wrap.appendChild(s); return wrap;
-  }
-  function button(label, onClick) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.textContent = label;
-    b.addEventListener('click', onClick);
-    return b;
-  }
-  function buildPanel() {
-    panel.innerHTML = '';
-    panel.appendChild(head('ФОТО'));
-    PHOTO_SPEC.forEach(function (s) { panel.appendChild(row(s)); });
-    panel.appendChild(head('ТЕКСТ'));
-    TEXT_SPEC.forEach(function (s) { panel.appendChild(row(s)); });
-    panel.appendChild(sel('txtAlign', 'выравнивание', ['чередовать', 'слева', 'справа'],
-      'С какой стороны стоят блоки: строго слева, строго справа или попеременно.'));
-    panel.appendChild(check('txtBgOn', 'подложка под текстом',
-      'Включить светлую плашку за текстом. Её прозрачность задаётся ползунком «фон подложки».'));
-    panel.appendChild(head('ЭТАЖИ'));
-    FLOOR_SPEC.forEach(function (s) { panel.appendChild(row(s)); });
-    panel.appendChild(head('ОБЩЕЕ'));
-    panel.appendChild(check('paused', 'пауза', 'Остановить появление новых фотографий-вспышек.'));
-    panel.appendChild(check('showGrid', 'показать сетку', 'Показать служебную сетку из клеток — удобно при настройке раскладки.'));
-    panel.appendChild(check('uncrop', 'фото без обрезки (дебаг)', 'Показывать фотографии целиком, без кадрирования, с пунктирной рамкой места.')); // ДЕБАГ
-    panel.appendChild(button('сохранить настройки', function () {
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' }));
-      a.download = 'my-ceramics-settings.json';
-      a.click();
-    }));
-    panel.appendChild(button('загрузить настройки', function () {
-      var inp = document.createElement('input');
-      inp.type = 'file'; inp.accept = '.json,application/json';
-      inp.onchange = function () {
-        inp.files[0].text().then(function (t) {
-          var o = JSON.parse(t);
-          cfg = Object.assign({}, DEF);
-          for (var k in DEF) if (k in o) cfg[k] = o[k];
-          save(); buildPanel(); apply();
-        }).catch(function () { alert('Не получилось прочитать файл настроек'); });
-      };
-      inp.click();
-    }));
-    panel.appendChild(button('сбросить', function () { cfg = Object.assign({}, DEF); save(); buildPanel(); apply(); }));
-  }
-  toggle.addEventListener('click', function () {
-    panel.hidden = !panel.hidden;
-    toggle.textContent = panel.hidden ? '⚙' : '✕';
-  });
-
-  function load() {
-    var c = Object.assign({}, DEF);
-    try {
-      var raw = localStorage.getItem('tummo-my-ceramics-cfg');
-      if (raw) { var o = JSON.parse(raw); for (var k in DEF) if (k in o) c[k] = o[k]; }
-    } catch (e) {}
-    try {
-      var q = new URLSearchParams(location.search);
-      for (var key in DEF) {
-        if (!q.has(key)) continue;
-        var val = q.get(key);
-        c[key] = (typeof DEF[key] === 'boolean') ? (val === '1' || val === 'true') : parseFloat(val);
-      }
-    } catch (e2) {}
-    return c;
-  }
-  function save() { try { localStorage.setItem('tummo-my-ceramics-cfg', JSON.stringify(cfg)); } catch (e) {} }
-
-  var rt;
-  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(apply, 130); });
-  window.addEventListener('scroll', function () {
-    if (window.rq) return;
-    window.rq = requestAnimationFrame(function () { window.rq = 0; onScroll(); fillSlots(); });
-  }, { passive: true });
-  document.addEventListener('visibilitychange', function () {
-    if (!document.hidden && !reduce && timer == null) loop();
-  });
-
-  buildPanel();
-  apply();
-  if (reduce) { for (var i = 0; i < 5; i++) tryPlace(); }
-  else loop();
-})();
-</script>
-{% endraw %}
+<script src="/assets/js/my-ceramics.js"></script>
