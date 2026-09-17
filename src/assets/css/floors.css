@@ -1,0 +1,60 @@
+/* Страницы «этажами»: текст, фоны этажей, вспышки фото — src/_includes/floors.njk */
+.fl{position:relative;width:100%;background:#171717;overflow:hidden;overflow:clip} /* clip, а не hidden: иначе параллакс считается от этого блока, а не от экрана */
+
+/* этажи с фонами (компьютер) */
+.fl-floor{position:absolute;left:0;right:0;overflow:hidden;overflow:clip;z-index:0}
+.fl-floor-bg{position:absolute;top:0;left:0;width:100%;object-fit:cover;will-change:transform;filter:saturate(.9)}
+/* параллакс фона считает сам браузер при прокрутке — без отставания на кадр и дрожания.
+   --from/--to и высоту фона задаёт floors.js; в браузерах без поддержки фон двигает скрипт */
+@supports (animation-timeline: view()){
+  .fl-floor{view-timeline-name:--fl-floor}
+  .fl-floor-bg{animation:fl-parallax linear both;animation-timeline:--fl-floor;animation-range:cover 0% cover 100%}
+  @keyframes fl-parallax{from{transform:translateY(var(--from))}to{transform:translateY(var(--to))}}
+}
+.fl-floor-dim{position:absolute;inset:0;background:#171717}
+
+.fl-text{position:absolute;z-index:2;color:#d9c5ae;font-weight:300;line-height:1.55;
+  font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1));box-sizing:border-box}
+.fl-text.hl{background:rgba(217,197,174,var(--tbg,.06));padding:1.05em 1.2em;border-radius:2px}
+.fl-text .muted{opacity:.5}
+.fl-text a{text-decoration:underline;text-underline-offset:4px;
+  text-decoration-thickness:1px;text-decoration-color:rgba(217,197,174,.4)}
+.fl-text a:hover{text-decoration-color:#d9c5ae}
+/* ссылки: при наведении загораются сразу, гаснут за 100 мс */
+.fl-text a,.fl-footer a{transition:opacity .1s,text-decoration-color .1s}
+.fl-text a:hover,.fl-footer a:hover{transition:none}
+
+.fl-logo{position:absolute;z-index:3;left:2.1rem;top:1.5rem}
+.fl-logo img{height:2.6rem;width:auto;display:block}
+
+.fl-footer{position:absolute;z-index:3;left:2.1rem;right:2.1rem;bottom:1.8rem;
+  display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2.5rem;color:#d9c5ae;font-weight:300;
+  font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1))}
+.fl-footer nav{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem}
+.fl-footer a{opacity:.75}
+.fl-footer a:hover{opacity:1}
+
+/* вспышки фото (компьютер) */
+.fl-photo{position:absolute;z-index:1;object-fit:cover;opacity:0;
+  transition:opacity var(--fade,1150ms) ease-in-out;will-change:opacity}
+.fl-photo.on{opacity:1}
+
+/* фото между абзацами (телефон) */
+.fl-slot{display:none}
+
+@media (max-width:767px){
+  .fl{height:auto!important;overflow:visible;padding:1.2rem 1.35rem 2.5rem}
+  .fl-floor,.fl-photo{display:none!important}
+  .fl-logo{position:static;display:block;margin:.5rem 0}
+  .fl-text{position:relative;width:auto!important;max-width:34rem;margin-top:1.7rem;
+    font-size:clamp(17px,4.8vw,20px)}
+  .fl-footer{position:static;flex-direction:column;align-items:flex-start;gap:1rem;
+    margin-top:3.5rem;padding-top:1.6rem;border-top:1px solid rgba(217,197,174,.15);font-size:clamp(17px,4.8vw,20px)}
+  /* место под фото одной высоты, фото вписывается целиком и прижато влево — страница не скачет */
+  .fl-slot{display:flex;align-items:center;height:min(112vw,620px);margin-top:2.2rem}
+  .fl-slot img{max-width:80%;max-height:100%;opacity:0;transition:opacity var(--fade,1150ms) ease-in-out}
+  .fl-slot img.on{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.fl-photo,.fl-slot img{transition-duration:200ms}}
+.fl-p{margin-top:.6em}
+.fl-list{margin-top:.4em;padding-left:1.1em;list-style:"— "}

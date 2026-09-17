@@ -1,10 +1,10 @@
-// Панель настроек страницы «Моя керамика». В обычном режиме не загружается:
-// включается через ?tune, выключается через ?tune=0 (см. конец ceramics.js).
+// Панель настроек страниц «этажами». В обычном режиме не загружается:
+// включается через ?tune, выключается через ?tune=0 (см. конец floors.js).
 (function () {
-  var MC = window.MC;
-  var cfg = MC.cfg, field = MC.field;
+  var FLOORS = window.FLOORS;
+  var cfg = FLOORS.cfg, field = FLOORS.field;
   var DEF = Object.assign({}, cfg);
-  var STORE = 'tummo-ceramics-cfg';
+  var STORE = 'tummo-floors-cfg' + location.pathname; // настройки у каждой страницы свои
   // только для отладки: сетка и фото без обрезки
   DEF.showGrid = false;
   DEF.uncrop = false;
@@ -35,39 +35,39 @@
 
   var css = document.createElement('style');
   css.textContent = [
-    '.mc-grid{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.16;',
+    '.fl-grid{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.16;',
     '  background-image:repeating-linear-gradient(to right,#d9c5ae 0 1px,transparent 1px var(--cw)),',
     '  repeating-linear-gradient(to bottom,#d9c5ae 0 1px,transparent 1px var(--cw))}',
-    '.mc.uncrop .mc-photo{object-fit:contain;outline:1px dashed rgba(217,197,174,.5)}',
-    '.mc-toggle{position:fixed;top:12px;right:12px;z-index:51;background:rgba(10,10,10,.82);color:#d9c5ae;',
+    '.fl.uncrop .fl-photo{object-fit:contain;outline:1px dashed rgba(217,197,174,.5)}',
+    '.fl-toggle{position:fixed;top:12px;right:12px;z-index:51;background:rgba(10,10,10,.82);color:#d9c5ae;',
     '  border:0;border-radius:8px;padding:6px 10px;font:400 13px/1 system-ui,sans-serif;cursor:pointer}',
-    '.mc-panel{position:fixed;top:50px;right:12px;z-index:50;width:256px;max-width:calc(100vw - 24px);',
+    '.fl-panel{position:fixed;top:50px;right:12px;z-index:50;width:256px;max-width:calc(100vw - 24px);',
     '  max-height:calc(100vh - 64px);overflow:auto;background:rgba(10,10,10,.9);backdrop-filter:blur(8px);',
     '  color:#d9c5ae;font:400 12px/1.35 system-ui,sans-serif;border-radius:8px;padding:10px 12px 12px}',
-    '.mc-panel[hidden]{display:none}',
-    '.mc-head{margin:12px 0 4px;font-weight:700;letter-spacing:.14em;font-size:10px;opacity:.55}',
-    '.mc-head:first-child{margin-top:0}',
-    '.mc-row{margin-top:8px}',
-    '.mc-row .lbl{display:flex;justify-content:space-between;gap:8px;margin-bottom:2px}',
-    '.mc-row .lbl span{border-bottom:1px dotted rgba(217,197,174,.35);cursor:help}',
-    '.mc-row .lbl b{font-weight:600;font-variant-numeric:tabular-nums;opacity:.85}',
-    '.mc-panel input[type=range]{width:100%;accent-color:#d9c5ae;margin:0}',
-    '.mc-panel select{width:100%;background:#1c1c1c;color:#d9c5ae;border:1px solid #3a3a3a;border-radius:4px;padding:3px 4px;font:inherit}',
-    '.mc-check{display:flex;align-items:center;gap:6px;margin-top:9px;cursor:help}',
-    '.mc-panel button{margin-top:12px;width:100%;background:rgba(217,197,174,.12);color:#d9c5ae;border:0;',
+    '.fl-panel[hidden]{display:none}',
+    '.fl-head{margin:12px 0 4px;font-weight:700;letter-spacing:.14em;font-size:10px;opacity:.55}',
+    '.fl-head:first-child{margin-top:0}',
+    '.fl-row{margin-top:8px}',
+    '.fl-row .lbl{display:flex;justify-content:space-between;gap:8px;margin-bottom:2px}',
+    '.fl-row .lbl span{border-bottom:1px dotted rgba(217,197,174,.35);cursor:help}',
+    '.fl-row .lbl b{font-weight:600;font-variant-numeric:tabular-nums;opacity:.85}',
+    '.fl-panel input[type=range]{width:100%;accent-color:#d9c5ae;margin:0}',
+    '.fl-panel select{width:100%;background:#1c1c1c;color:#d9c5ae;border:1px solid #3a3a3a;border-radius:4px;padding:3px 4px;font:inherit}',
+    '.fl-check{display:flex;align-items:center;gap:6px;margin-top:9px;cursor:help}',
+    '.fl-panel button{margin-top:12px;width:100%;background:rgba(217,197,174,.12);color:#d9c5ae;border:0;',
     '  border-radius:6px;padding:6px;font:inherit;cursor:pointer}',
-    '.mc-panel button:hover{background:rgba(217,197,174,.2)}',
-    '@media (max-width:767px){.mc-grid,.mc-toggle,.mc-panel{display:none}}'
+    '.fl-panel button:hover{background:rgba(217,197,174,.2)}',
+    '@media (max-width:767px){.fl-grid,.fl-toggle,.fl-panel{display:none}}'
   ].join('\n');
   document.head.appendChild(css);
 
   var grid = document.createElement('div');
-  grid.className = 'mc-grid';
+  grid.className = 'fl-grid';
   field.appendChild(grid);
   var toggle = document.createElement('button');
-  toggle.className = 'mc-toggle'; toggle.textContent = '⚙'; toggle.setAttribute('aria-label', 'Параметры');
+  toggle.className = 'fl-toggle'; toggle.textContent = '⚙'; toggle.setAttribute('aria-label', 'Параметры');
   var panel = document.createElement('form');
-  panel.className = 'mc-panel'; panel.hidden = true;
+  panel.className = 'fl-panel'; panel.hidden = true;
   document.body.appendChild(toggle);
   document.body.appendChild(panel);
   toggle.addEventListener('click', function () {
@@ -80,7 +80,7 @@
   }
   function save() { try { localStorage.setItem(STORE, JSON.stringify(cfg)); } catch (e) {} }
   function update() {
-    MC.apply();
+    FLOORS.apply();
     grid.hidden = !cfg.showGrid;
     grid.style.setProperty('--cw', (field.clientWidth / cfg.cols) + 'px');
     field.classList.toggle('uncrop', !!cfg.uncrop);
@@ -95,7 +95,7 @@
   }
   function row(s) {
     var key = s[0];
-    var wrap = el('div', 'mc-row'), lbl = el('div', 'lbl');
+    var wrap = el('div', 'fl-row'), lbl = el('div', 'lbl');
     var name = el('span', null, s[1]); name.title = s[5];
     var val = el('b', null, cfg[key]);
     var inp = el('input');
@@ -106,7 +106,7 @@
     return wrap;
   }
   function select(key, label, opts, desc) {
-    var wrap = el('div', 'mc-row'), lbl = el('div', 'lbl');
+    var wrap = el('div', 'fl-row'), lbl = el('div', 'lbl');
     var name = el('span', null, label); name.title = desc;
     var se = el('select'); se.title = desc;
     opts.forEach(function (o, i) { var op = el('option', null, o); op.value = i; se.appendChild(op); });
@@ -116,7 +116,7 @@
     return wrap;
   }
   function check(key, label, desc) {
-    var wrap = el('label', 'mc-check'); wrap.title = desc;
+    var wrap = el('label', 'fl-check'); wrap.title = desc;
     var inp = el('input'); inp.type = 'checkbox'; inp.checked = !!cfg[key];
     inp.addEventListener('change', function () { cfg[key] = inp.checked; change(); });
     wrap.appendChild(inp); wrap.appendChild(el('span', null, label));
@@ -131,24 +131,24 @@
 
   function build() {
     panel.innerHTML = '';
-    panel.appendChild(el('div', 'mc-head', 'ФОТО'));
+    panel.appendChild(el('div', 'fl-head', 'ФОТО'));
     PHOTO_SPEC.forEach(function (s) { panel.appendChild(row(s)); });
-    panel.appendChild(el('div', 'mc-head', 'ТЕКСТ'));
+    panel.appendChild(el('div', 'fl-head', 'ТЕКСТ'));
     TEXT_SPEC.forEach(function (s) { panel.appendChild(row(s)); });
     panel.appendChild(select('txtAlign', 'выравнивание', ['чередовать', 'слева', 'справа'],
       'С какой стороны стоят блоки: строго слева, строго справа или попеременно.'));
     panel.appendChild(check('txtBgOn', 'подложка под текстом',
       'Включить светлую плашку за текстом. Её прозрачность задаётся ползунком «фон подложки».'));
-    panel.appendChild(el('div', 'mc-head', 'ЭТАЖИ'));
+    panel.appendChild(el('div', 'fl-head', 'ЭТАЖИ'));
     FLOOR_SPEC.forEach(function (s) { panel.appendChild(row(s)); });
-    panel.appendChild(el('div', 'mc-head', 'ОБЩЕЕ'));
+    panel.appendChild(el('div', 'fl-head', 'ОБЩЕЕ'));
     panel.appendChild(check('paused', 'пауза', 'Остановить появление новых фотографий-вспышек.'));
     panel.appendChild(check('showGrid', 'показать сетку', 'Показать служебную сетку из клеток — удобно при настройке раскладки.'));
     panel.appendChild(check('uncrop', 'фото без обрезки', 'Показывать фотографии целиком, с пунктирной рамкой места.'));
     panel.appendChild(button('сохранить настройки', function () {
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' }));
-      a.download = 'ceramics-settings.json';
+      a.download = location.pathname.replace(/\//g, '') + '-settings.json';
       a.click();
     }));
     panel.appendChild(button('загрузить настройки', function () {

@@ -1,0 +1,29 @@
+---
+layout: base.njk
+---
+{#- Страница «этажами»: абзацы с атрибутом data-txt, между ними места под фото на телефоне (fl-slot).
+    Фоны и фото — photos[photoSet] из src/_data/photos.js, логика — /assets/js/floors.js -#}
+<link rel="stylesheet" href="/assets/css/floors.css">
+
+<main class="fl" id="fl">
+  <a href="/" class="fl-logo" id="fl-logo">
+    <img src="/assets/img/logo-horizontal.svg" alt="Туммо">
+  </a>
+
+  {{ content | safe }}
+
+  <footer class="fl-footer" id="fl-footer">
+    <nav>
+      <a href="/">Главная</a>
+      <a href="/ceramics/">Моя керамика</a>
+      <a href="/workshops/">Мастерская</a>
+    </nav>
+    <nav>
+      <a href="https://vk.ru/tummo_room">ВКонтакте</a>
+      <a href="https://t.me/Librocubic">Telegram</a>
+    </nav>
+  </footer>
+</main>
+
+<script>window.PHOTOS = {{ photos[photoSet] | dump | safe }};</script>
+<script src="/assets/js/floors.js"></script>

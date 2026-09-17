@@ -1,14 +1,14 @@
-// Страница «Моя керамика»: этажи с фонами, вспышки фото (компьютер), смена фото между абзацами (телефон).
-// Данные (фоны, фото, пропорции) — window.CERAMICS из src/_data/ceramics.js.
-// Панель настроек — ceramics-tuner.js, грузится только с ?tune (см. в конце файла).
+// Страницы «этажами» (Моя керамика, Мастерская): этажи с фонами, вспышки фото (компьютер), смена фото между абзацами (телефон).
+// Данные (фоны, фото, пропорции) — window.PHOTOS из src/_data/photos.js.
+// Панель настроек — floors-tuner.js, грузится только с ?tune (см. в конце файла).
 (function () {
-  var field = document.getElementById('mc');
-  var footer = document.getElementById('mc-footer');
-  var logo = document.getElementById('mc-logo');
+  var field = document.getElementById('fl');
+  var footer = document.getElementById('fl-footer');
+  var logo = document.getElementById('fl-logo');
 
-  var FLOOR_BGS = window.CERAMICS.bgs;
-  var FLOOR_PHOTOS = window.CERAMICS.floors;
-  var ASPECT = window.CERAMICS.aspects;
+  var FLOOR_BGS = window.PHOTOS.bgs;
+  var FLOOR_PHOTOS = window.PHOTOS.floors;
+  var ASPECT = window.PHOTOS.aspects;
 
   // размеры — в клетках квадратной сетки: ширина страницы / cols
   var cfg = {
@@ -30,6 +30,7 @@
   var textRects = [];   // занятые текстом, логотипом и футером прямоугольники
   var floorBands = [];  // этажи в строках сетки: { s, e }
   var floors = [];
+  var scrollTimeline = window.CSS && CSS.supports('animation-timeline: view()');
 
   // ---- раскладка текста и этажей (компьютер) ----
   function layoutText() {
@@ -88,38 +89,43 @@
   }
 
   function buildFloors() {
-    field.querySelectorAll('.mc-floor').forEach(function (n) { n.remove(); });
+    field.querySelectorAll('.fl-floor').forEach(function (n) { n.remove(); });
     floors = [];
     if (isMobile()) return;
     var cell = field.clientWidth / cfg.cols;
     floorBands.forEach(function (b, i) {
       var el = document.createElement('div');
-      el.className = 'mc-floor';
+      el.className = 'fl-floor';
       el.style.top = (b.s * cell) + 'px';
       el.style.height = ((b.e - b.s) * cell) + 'px';
       var bg = new Image();
-      bg.className = 'mc-floor-bg'; bg.alt = '';
+      bg.className = 'fl-floor-bg'; bg.alt = '';
       var dim = document.createElement('div');
-      dim.className = 'mc-floor-dim';
+      dim.className = 'fl-floor-dim';
       dim.style.opacity = cfg.floorDim / 100;
       el.appendChild(bg); el.appendChild(dim);
       field.insertBefore(el, field.firstChild);
-      floors.push({ el: el, bg: bg, src: FLOOR_BGS[i % FLOOR_BGS.length] });
+      // k=0 — фон едет с этажом, k=1 — фон неподвижен и высотой в экран;
+      // между ними смешиваем, так что видимая часть этажа всегда закрыта фоном.
+      // Сдвиг фона = −k × (верх этажа относительно экрана): от −k·vh (этаж внизу экрана) до k·h (ушёл вверх)
+      var h = (b.e - b.s) * cell, vh = window.innerHeight, k = cfg.parallax / 100;
+      bg.style.height = Math.ceil(h * (1 - k) + vh * k) + 'px';
+      bg.style.setProperty('--from', (-k * vh) + 'px');
+      bg.style.setProperty('--to', (k * h) + 'px');
+      floors.push({ el: el, bg: bg, k: k, src: FLOOR_BGS[i % FLOOR_BGS.length] });
     });
     updateFloors();
   }
 
   function updateFloors() {
     var vh = window.innerHeight;
-    var k = cfg.parallax / 100;
     floors.forEach(function (f) {
       var r = f.el.getBoundingClientRect();
       // фон грузим, когда этаж ближе двух экранов
       if (!f.bg.src && r.top < vh * 2 && r.bottom > -vh) f.bg.src = f.src;
-      // k=0 — фон едет с этажом, k=1 — фон неподвижен и высотой в экран;
-      // между ними смешиваем, так что видимая часть этажа всегда закрыта фоном
-      f.bg.style.height = (r.height * (1 - k) + vh * k).toFixed(1) + 'px';
-      f.bg.style.transform = 'translateY(' + (-k * r.top).toFixed(1) + 'px)';
+      // параллакс считает браузер по прокрутке (floors.css); из скрипта — только в старых браузерах,
+      // там фон отстаёт от прокрутки на кадр и может подрагивать
+      if (!scrollTimeline) f.bg.style.transform = 'translateY(' + (-f.k * r.top) + 'px)';
     });
   }
 
@@ -173,7 +179,7 @@
 
   function place(name, rect) {
     var img = new Image();
-    img.className = 'mc-photo';
+    img.className = 'fl-photo';
     img.alt = '';
     img.style.left = rect.l + 'px';
     img.style.top = rect.t + 'px';
@@ -272,7 +278,7 @@
   else loop();
 
   // для панели настроек
-  window.MC = { cfg: cfg, apply: apply, field: field };
+  window.FLOORS = { cfg: cfg, apply: apply, field: field };
 
   // Панель настроек: открыть страницу с ?tune (запоминается), выключить — ?tune=0
   try {
@@ -281,7 +287,7 @@
     else if (tune !== null) localStorage.setItem('tummo-tune', '1');
     if (localStorage.getItem('tummo-tune')) {
       var s = document.createElement('script');
-      s.src = '/assets/js/ceramics-tuner.js';
+      s.src = '/assets/js/floors-tuner.js';
       document.body.appendChild(s);
     }
   } catch (e) {}

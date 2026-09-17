@@ -1,119 +1,50 @@
 ---
-layout: base.njk
+layout: floors.njk
 title: Моя керамика — Tummo Room
+photoSet: ceramics
 ---
 
-<style>
-  .mc{position:relative;width:100%;background:#171717;overflow:hidden}
+<div class="fl-text" data-txt>
+  Привет, меня зовут Оля, и я создаю керамику для китайского чая в своей мастерской в Волгограде
+</div>
 
-  /* этажи с фонами (компьютер) */
-  .mc-floor{position:absolute;left:0;right:0;overflow:hidden;z-index:0}
-  .mc-floor-bg{position:absolute;top:0;left:0;width:100%;object-fit:cover;will-change:transform;filter:saturate(.9)}
-  .mc-floor-dim{position:absolute;inset:0;background:#171717}
+<div class="fl-slot" data-slot><img alt=""></div>
 
-  .mc-text{position:absolute;z-index:2;color:#d9c5ae;font-weight:300;line-height:1.55;
-    font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1));box-sizing:border-box}
-  .mc-text.hl{background:rgba(217,197,174,var(--tbg,.06));padding:1.05em 1.2em;border-radius:2px}
-  .mc-text .muted{opacity:.5}
-  .mc-text a{text-decoration:underline;text-underline-offset:4px;
-    text-decoration-thickness:1px;text-decoration-color:rgba(217,197,174,.4)}
-  .mc-text a:hover{text-decoration-color:#d9c5ae}
+<div class="fl-text" data-txt>
+  Природа — моё главное вдохновение. Моё главное стремление — это естественность форм и палитры.
+  Чтобы пиалы, которые я создаю, не отвлекали от их главного содержания — чая. Чтобы дополняли его
+  и помогали возвращаться вниманием к себе, в настоящий момент
+</div>
 
-  .mc-logo{position:absolute;z-index:3;left:2.1rem;top:1.5rem}
-  .mc-logo img{height:2.6rem;width:auto;display:block}
+<div class="fl-slot" data-slot><img alt=""></div>
 
-  .mc-footer{position:absolute;z-index:3;left:2.1rem;right:2.1rem;bottom:1.8rem;
-    display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2.5rem;color:#d9c5ae;font-weight:300;
-    font-size:calc(clamp(13px,1.15vw,17px) * var(--tscale,1))}
-  .mc-footer nav{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem}
-  .mc-footer a{opacity:.75;transition:opacity .2s}
-  .mc-footer a:hover{opacity:1}
+<div class="fl-text" data-txt>
+  Хочу, чтобы в моей керамике был баланс естественного и рукотворного. Ведь глина, компоненты
+  глазурей и жар в печи — это всё элементы природы. И я здесь просто помогаю им найти гармоничную
+  форму, сохраняя небрежную асимметрию природных фактур
+</div>
 
-  /* вспышки фото (компьютер) */
-  .mc-photo{position:absolute;z-index:1;object-fit:cover;opacity:0;
-    transition:opacity var(--fade,1150ms) ease-in-out;will-change:opacity}
-  .mc-photo.on{opacity:1}
+<div class="fl-slot" data-slot><img alt=""></div>
 
-  /* фото между абзацами (телефон) */
-  .mc-slot{display:none}
+<div class="fl-text" data-txt>
+  Моя керамика для тех, кто любит остановиться на прогулке в лесу и вдохнуть полной грудью,
+  рассмотреть кору и понаблюдать за замысловатой игрой теней от листвы на земле. Для тех, кто хочет
+  вынырнуть из суеты будней, замедлиться и увидеть красоту мира
+</div>
 
-  @media (max-width:767px){
-    .mc{height:auto!important;overflow:visible;padding:1.2rem 1.35rem 2.5rem}
-    .mc-floor,.mc-photo{display:none!important}
-    .mc-logo{position:static;display:block;margin:.5rem 0}
-    .mc-text{position:relative;width:auto!important;max-width:34rem;margin-top:1.7rem;
-      font-size:clamp(17px,4.8vw,20px)}
-    .mc-footer{position:static;flex-direction:column;align-items:flex-start;gap:1rem;
-      margin-top:3.5rem;padding-top:1.6rem;border-top:1px solid rgba(217,197,174,.15);font-size:clamp(17px,4.8vw,20px)}
-    /* место под фото одной высоты, фото вписывается целиком и прижато влево — страница не скачет */
-    .mc-slot{display:flex;align-items:center;height:min(112vw,620px);margin-top:2.2rem}
-    .mc-slot img{max-width:80%;max-height:100%;opacity:0;transition:opacity var(--fade,1150ms) ease-in-out}
-    .mc-slot img.on{opacity:1}
-  }
-  @media (prefers-reduced-motion:reduce){.mc-photo,.mc-slot img{transition-duration:200ms}}
-</style>
+<div class="fl-slot" data-slot><img alt=""></div>
 
-<main class="mc" id="mc">
-  <a href="/" class="mc-logo" id="mc-logo">
-    <img src="/assets/img/logo-horizontal.svg" alt="Туммо">
-  </a>
-
-  <div class="mc-text" data-txt>
-    Привет, меня зовут Оля, и я создаю керамику для китайского чая в своей мастерской в Волгограде
+<div class="fl-text" data-txt>
+  Купить керамику можно во ВКонтакте —
+  <a href="https://vk.ru/tummo_room">vk.ru/tummo_room</a>. А ещё она есть в чайных:
+  <div style="margin-top:.6em">
+    <div><span class="muted">Волгоград — </span><a href="https://teaclouds.ru/">Облака</a>, <a href="https://drakonisoroka.ru/">Дракон и сорока</a>, <a href="https://instagram.com/somely_me">Somely</a></div>
+    <div><span class="muted">Санкт-Петербург — </span><a href="https://vk.ru/tsikadatea">Цикада</a>, <a href="https://чяй.рф/">Чяй</a>, <a href="https://vk.ru/po_putea">По пути</a></div>
+    <div><span class="muted">Новосибирск — </span><a href="https://chajen.ru/">Ча жень</a>, <a href="https://vk.ru/2dragons_tea">Два дракона</a></div>
+    <div><span class="muted">Краснодар — </span><a href="https://koitea.taplink.ws/">Кои</a></div>
   </div>
-
-  <div class="mc-slot" data-slot><img alt=""></div>
-
-  <div class="mc-text" data-txt>
-    Природа — моё главное вдохновение. Моё главное стремление — это естественность форм и палитры.
-    Чтобы пиалы, которые я создаю, не отвлекали от их главного содержания — чая. Чтобы дополняли его
-    и помогали возвращаться вниманием к себе, в настоящий момент
+  <div style="margin-top:1em">
+    Если вам близок мой стиль, я могу сделать керамику на заказ — для дома или для заведения.
+    Напишите мне: <a href="https://t.me/Librocubic">@Librocubic</a>
   </div>
-
-  <div class="mc-slot" data-slot><img alt=""></div>
-
-  <div class="mc-text" data-txt>
-    Хочу, чтобы в моей керамике был баланс естественного и рукотворного. Ведь глина, компоненты
-    глазурей и жар в печи — это всё элементы природы. И я здесь просто помогаю им найти гармоничную
-    форму, сохраняя небрежную асимметрию природных фактур
-  </div>
-
-  <div class="mc-slot" data-slot><img alt=""></div>
-
-  <div class="mc-text" data-txt>
-    Моя керамика для тех, кто любит остановиться на прогулке в лесу и вдохнуть полной грудью,
-    рассмотреть кору и понаблюдать за замысловатой игрой теней от листвы на земле. Для тех, кто хочет
-    вынырнуть из суеты будней, замедлиться и увидеть красоту мира
-  </div>
-
-  <div class="mc-slot" data-slot><img alt=""></div>
-
-  <div class="mc-text" data-txt>
-    Купить керамику можно во ВКонтакте —
-    <a href="https://vk.ru/tummo_room">vk.ru/tummo_room</a>. А ещё она есть в чайных:
-    <div style="margin-top:.6em">
-      <div><span class="muted">Волгоград — </span><a href="https://teaclouds.ru/">Облака</a>, <a href="https://drakonisoroka.ru/">Дракон и сорока</a>, <a href="https://instagram.com/somely_me">Somely</a></div>
-      <div><span class="muted">Санкт-Петербург — </span><a href="https://vk.ru/tsikadatea">Цикада</a>, <a href="https://чяй.рф/">Чяй</a>, <a href="https://vk.ru/po_putea">По пути</a></div>
-      <div><span class="muted">Новосибирск — </span><a href="https://chajen.ru/">Ча жень</a>, <a href="https://vk.ru/2dragons_tea">Два дракона</a></div>
-      <div><span class="muted">Краснодар — </span><a href="https://koitea.taplink.ws/">Кои</a></div>
-    </div>
-    <div style="margin-top:1em">
-      Если вам близок мой стиль, я могу сделать керамику на заказ — для дома или для заведения.
-      Напишите мне: <a href="https://t.me/Librocubic">@Librocubic</a>
-    </div>
-  </div>
-
-  <footer class="mc-footer" id="mc-footer">
-    <nav>
-      <a href="/">Главная</a>
-      <a href="/workshops/">Мастерклассы и коворкинг</a>
-    </nav>
-    <nav>
-      <a href="https://vk.ru/tummo_room">ВКонтакте</a>
-      <a href="https://t.me/Librocubic">Telegram</a>
-    </nav>
-  </footer>
-</main>
-
-<script>window.CERAMICS = {{ ceramics | dump | safe }};</script>
-<script src="/assets/js/ceramics.js"></script>
+</div>
