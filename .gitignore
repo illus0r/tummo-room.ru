@@ -2,6 +2,3 @@ node_modules/
 _site/
 
 .DS_Store
-
-# оригиналы фото: из них pnpm photos делает сжатые копии в img/photos
-src/assets/img/для сайта/

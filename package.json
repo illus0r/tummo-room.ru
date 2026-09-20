@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "photos": "sh scripts/photos.sh",
     "build:css": "tailwindcss -i src/assets/css/input.css -o _site/assets/css/style.css --minify",
     "build:11ty": "eleventy",
     "build": "pnpm run build:css && pnpm run build:11ty",
