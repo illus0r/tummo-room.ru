@@ -6,9 +6,15 @@
 # Папка с результатом каждый раз собирается заново — так не остаётся лишних фото.
 set -e
 
-conv() { # $1 — исходник, $2 — результат, $3 — ширина
+conv() { # $1 — исходник, $2 — результат, $3 — максимальная ширина
   mkdir -p "$(dirname "$2")"
-  cwebp -quiet -metadata icc -resize "$3" 0 -q 78 "$1" -o "$2" && echo "→ $2"
+  # уменьшаем, только если оригинал шире: растянуть маленький — значит просто замылить его
+  w=$(sips -g pixelWidth "$1" 2>/dev/null | awk '/pixelWidth/{print $2}')
+  if [ -n "$w" ] && [ "$w" -gt "$3" ] 2>/dev/null; then
+    cwebp -quiet -metadata icc -resize "$3" 0 -q 78 "$1" -o "$2" && echo "→ $2"
+  else
+    cwebp -quiet -metadata icc -q 78 "$1" -o "$2" && echo "→ $2"
+  fi
 }
 
 page() { # $1 — папка с оригиналами, $2 — страница
@@ -19,7 +25,7 @@ page() { # $1 — папка с оригиналами, $2 — страница
     [ -f "$f" ] || continue
     name=$(basename "$f"); base=${name%.*}
     case "$name" in
-      !*)     conv "$f" "$OUT/bg/$(echo "$base" | cut -c2- | tr -d " ").webp" 2400 ;;
+      !*)     conv "$f" "$OUT/bg/$(echo "$base" | cut -c2- | tr -d " ").webp" 3840 ;;
       *.webp) mkdir -p "$OUT/all"; cp "$f" "$OUT/all/" ;;
       *)      conv "$f" "$OUT/all/$base.webp" 1200 ;;
     esac

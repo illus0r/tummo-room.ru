@@ -10,17 +10,20 @@ layout: base.njk
     <img src="/assets/img/logo-horizontal.svg" alt="Туммо">
   </a>
 
+  {#- heading задаётся в начале страницы; <br> в нём — там, где перенос нужен по смыслу -#}
+  <h1 class="fl-title" id="fl-title">{{ heading | safe }}</h1>
+
   {{ content | safe }}
 
   <footer class="fl-footer" id="fl-footer">
     <nav>
       <a href="/">Главная</a>
       <a href="/ceramics/">Моя керамика</a>
-      <a href="/workshops/">Мастерская</a>
+      <a href="/workshops/">Мастер-классы и коворкинг</a>
     </nav>
     <nav>
       <a href="https://vk.ru/tummo_room">ВКонтакте</a>
-      <a href="https://t.me/Librocubic">Telegram</a>
+      <a href="https://t.me/tummo_room">Telegram</a>
     </nav>
   </footer>
 </main>

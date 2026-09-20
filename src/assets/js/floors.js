@@ -1,10 +1,34 @@
 // Страницы «этажами» (Моя керамика, Мастерская): этажи с фонами, вспышки фото (компьютер), смена фото между абзацами (телефон).
 // Данные (фоны, фото, пропорции) — window.PHOTOS из src/_data/photos.js.
-// Панель настроек — floors-tuner.js, грузится только с ?tune (см. в конце файла).
 (function () {
   var field = document.getElementById('fl');
   var footer = document.getElementById('fl-footer');
   var logo = document.getElementById('fl-logo');
+  var title = document.getElementById('fl-title');
+  // строки заголовка (их делит <br>) заворачиваем в блоки: так их можно мерить и не переносить
+  if (title) {
+    title.innerHTML = title.innerHTML.split(/<br\s*\/?>/i)
+      .map(function (line) { return '<span class="fl-title-line">' + line + '</span>'; }).join('');
+  }
+
+  // заголовок выключаем по ширине колонки абзацев: кегль подбираем так, чтобы самая
+  // длинная строка встала ровно в колонку. Разрядка висит и после последней буквы — её вычитаем,
+  // иначе правый край букв не дойдёт до края текста
+  function fitTitle(boxW) {
+    if (!title || !boxW) return;
+    title.style.fontSize = '';
+    var st = getComputedStyle(title);
+    var base = parseFloat(st.fontSize);
+    var ls = parseFloat(st.letterSpacing) || 0;
+    // мерим именно текст, а не коробку строки: коробка шириной во всю колонку,
+    // и по ней кегль не подобрать
+    var wide = 0, range = document.createRange();
+    [].forEach.call(title.children, function (l) {
+      range.selectNodeContents(l);
+      wide = Math.max(wide, range.getBoundingClientRect().width);
+    });
+    if (wide > ls) title.style.fontSize = (base * boxW / (wide - ls)) + 'px';
+  }
 
   var FLOOR_BGS = window.PHOTOS.bgs;
   var FLOOR_PHOTOS = window.PHOTOS.floors;
@@ -13,7 +37,7 @@
   // размеры — в клетках квадратной сетки: ширина страницы / cols
   var cfg = {
     // фото
-    cols: 12, tickMs: 650, holdMs: 4650, fadeMs: 1150, maxPhotos: 11,
+    cols: 12, tickMs: 650, holdMs: 4650, fadeMs: 1150, maxPhotos: 11, burst: 4,
     minU: 3, maxU: 6, attempts: 36, iters: 8,
     // текст
     txtCols: 6, txtGapRows: 4, txtInsetCols: 2, txtStartRows: 4,
@@ -40,6 +64,8 @@
         el.classList.remove('hl');
       });
       field.style.height = '';
+      if (title) { title.style.left = title.style.width = ''; }
+      fitTitle(textEls[0] && textEls[0].offsetWidth);
       textRects = []; floorBands = [];
       return;
     }
@@ -50,7 +76,24 @@
     field.style.setProperty('--tscale', cfg.txtScale / 100);
     field.style.setProperty('--tbg', cfg.txtBgOpacity / 100);
 
+    // заголовок — по левому краю и по ширине абзаца. Равняем по буквам, а не по колонке:
+    // у абзаца есть свои отступы (.hl), и его текст начинается не от края колонки
+    if (title && textEls.length) {
+      textEls[0].classList.toggle('hl', !!cfg.txtBgOn);
+      var tcs = getComputedStyle(textEls[0]);
+      var padL = parseFloat(tcs.paddingLeft) || 0;
+      var titleW = tcols * cell - padL - (parseFloat(tcs.paddingRight) || 0);
+      title.style.left = (inset * cell + padL) + 'px';
+      title.style.width = titleW + 'px';
+      fitTitle(titleW);
+    }
+
+    // первый абзац — ниже заголовка: он стоит на середине первого экрана и бывает в две строки
     var row = cfg.txtStartRows;
+    if (title) {
+      var titleBot = title.getBoundingClientRect().bottom - field.getBoundingClientRect().top;
+      row = Math.max(row, Math.ceil(titleBot / cell) + 1);
+    }
     var blockRows = [];
     textRects = [];
     textEls.forEach(function (el, i) {
@@ -78,6 +121,10 @@
     var fr = field.getBoundingClientRect();
     var lr = logo.getBoundingClientRect();
     textRects.push({ l: lr.left - fr.left - 8, t: 0, r: lr.right - fr.left + 8, b: lr.bottom - fr.top + 12 });
+    if (title) {
+      var tr = title.getBoundingClientRect();
+      textRects.push({ l: 0, t: tr.top - fr.top - 12, r: tr.right - fr.left + 12, b: tr.bottom - fr.top + 12 });
+    }
     var ft = footer.getBoundingClientRect();
     textRects.push({ l: 0, t: ft.top - fr.top - 8, r: fr.width, b: fieldH });
 
@@ -88,31 +135,50 @@
     floorBands = blockRows.map(function (_, i) { return { s: starts[i], e: starts[i + 1] }; });
   }
 
+  // границы этажей в пикселях: на компьютере — по сетке, на телефоне — посередине между абзацами
+  function floorSpans() {
+    if (!isMobile()) {
+      var cell = field.clientWidth / cfg.cols;
+      return floorBands.map(function (b) { return { t: b.s * cell, h: (b.e - b.s) * cell }; });
+    }
+    var top = field.getBoundingClientRect().top + window.scrollY;
+    var y = function (el, edge) { return el.getBoundingClientRect()[edge] + window.scrollY - top; };
+    var cuts = [0];
+    for (var i = 1; i < textEls.length; i++) cuts.push((y(textEls[i - 1], 'bottom') + y(textEls[i], 'top')) / 2);
+    cuts.push(field.offsetHeight);
+    return textEls.map(function (_, i) { return { t: cuts[i], h: cuts[i + 1] - cuts[i] }; });
+  }
+
   function buildFloors() {
-    field.querySelectorAll('.fl-floor').forEach(function (n) { n.remove(); });
-    floors = [];
-    if (isMobile()) return;
-    var cell = field.clientWidth / cfg.cols;
-    floorBands.forEach(function (b, i) {
+    var spans = floorSpans();
+    // этажи переиспользуем, а не собираем заново: иначе фоны перезагружаются при каждом
+    // изменении размера окна — а на телефоне его меняет одна только адресная строка
+    while (floors.length > spans.length) floors.pop().el.remove();
+    while (floors.length < spans.length) {
       var el = document.createElement('div');
       el.className = 'fl-floor';
-      el.style.top = (b.s * cell) + 'px';
-      el.style.height = ((b.e - b.s) * cell) + 'px';
       var bg = new Image();
       bg.className = 'fl-floor-bg'; bg.alt = '';
       var dim = document.createElement('div');
       dim.className = 'fl-floor-dim';
-      dim.style.opacity = cfg.floorDim / 100;
       el.appendChild(bg); el.appendChild(dim);
       field.insertBefore(el, field.firstChild);
+      floors.push({ el: el, bg: bg, dim: dim });
+    }
+    var vh = window.innerHeight, k = cfg.parallax / 100;
+    floors.forEach(function (f, i) {
+      var h = spans[i].h;
+      f.el.style.top = spans[i].t + 'px';
+      f.el.style.height = h + 'px';
+      f.dim.style.opacity = cfg.floorDim / 100;
+      f.k = k;
+      f.src = FLOOR_BGS[i % FLOOR_BGS.length];
       // k=0 — фон едет с этажом, k=1 — фон неподвижен и высотой в экран;
       // между ними смешиваем, так что видимая часть этажа всегда закрыта фоном.
       // Сдвиг фона = −k × (верх этажа относительно экрана): от −k·vh (этаж внизу экрана) до k·h (ушёл вверх)
-      var h = (b.e - b.s) * cell, vh = window.innerHeight, k = cfg.parallax / 100;
-      bg.style.height = Math.ceil(h * (1 - k) + vh * k) + 'px';
-      bg.style.setProperty('--from', (-k * vh) + 'px');
-      bg.style.setProperty('--to', (k * h) + 'px');
-      floors.push({ el: el, bg: bg, k: k, src: FLOOR_BGS[i % FLOOR_BGS.length] });
+      f.bg.style.height = Math.ceil(h * (1 - k) + vh * k) + 'px';
+      f.bg.style.setProperty('--from', (-k * vh) + 'px');
+      f.bg.style.setProperty('--to', (k * h) + 'px');
     });
     updateFloors();
   }
@@ -210,8 +276,20 @@
     img.src = name;
   }
 
+  // сколько вспышек сейчас в кадре (место занято сразу, ещё до загрузки фото, — поэтому залп не перебрасывает)
+  function inView() {
+    var vh = window.innerHeight, top = window.scrollY - field.offsetTop, n = 0;
+    active.forEach(function (p) { if (p.b > top && p.t < top + vh) n++; });
+    return n;
+  }
+
   function loop() {
-    if (!cfg.paused && !isMobile() && !document.hidden) tryPlace();
+    if (!cfg.paused && !isMobile() && !document.hidden) {
+      // пока экран пустует — только открыли страницу или въехали в новый участок —
+      // ставим залпом, а не по одной в такт; когда кадр набрался, ритм возвращается к обычному
+      var n = Math.max(1, cfg.burst - inView());
+      for (var i = 0; i < n; i++) tryPlace();
+    }
     setTimeout(loop, cfg.tickMs);
   }
 
@@ -268,27 +346,18 @@
 
   var resizeTimer, scrollFrame = 0;
   window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(apply, 130); });
+  // переход телефон↔компьютер пересчитываем сразу, не ждём паузы после resize:
+  // иначе заголовок остаётся с кеглем другого режима и распирает страницу вбок
+  if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', apply);
+  else if (mobileQuery.addListener) mobileQuery.addListener(apply);
   window.addEventListener('scroll', function () {
     if (scrollFrame) return;
     scrollFrame = requestAnimationFrame(function () { scrollFrame = 0; updateFloors(); fillSlots(); });
   }, { passive: true });
 
   apply();
+  // шрифт грузится со стороны: когда он встанет, высота абзацев меняется — пересчитываем этажи
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
   if (reduce) { for (var i = 0; i < 5; i++) tryPlace(); }
   else loop();
-
-  // для панели настроек
-  window.FLOORS = { cfg: cfg, apply: apply, field: field };
-
-  // Панель настроек: открыть страницу с ?tune (запоминается), выключить — ?tune=0
-  try {
-    var tune = new URLSearchParams(location.search).get('tune');
-    if (tune === '0') localStorage.removeItem('tummo-tune');
-    else if (tune !== null) localStorage.setItem('tummo-tune', '1');
-    if (localStorage.getItem('tummo-tune')) {
-      var s = document.createElement('script');
-      s.src = '/assets/js/floors-tuner.js';
-      document.body.appendChild(s);
-    }
-  } catch (e) {}
 })();
