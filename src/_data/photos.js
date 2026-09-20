@@ -36,13 +36,15 @@ function page(name, bgList) {
 }
 
 module.exports = () => ({
+  // фоны этажей по порядку, сверху вниз. Фон можно брать с любой страницы,
+  // и в самих вспышках фоны не участвуют
   ceramics: page("ceramics", [
-    "/assets/img/photos/ceramics/bg/siluet-u-okna.webp",
-    ...["vaza-u-okna", "zavarivanie-chaya", "pialy-na-stole", "obryv-u-volgi"]
-      .map((n) => `/assets/img/bg/${n}.webp`),
-  ]),
-  // фоны мастерской по этажам — «!»-фото из папки (в самих вспышках они не участвуют)
-  // фон можно брать из любой папки photos/<страница>/…, в том числе с другой страницы
+    "ceramics/bg/siluet-u-okna",
+    "ceramics/bg/vaza-u-okna",
+    "ceramics/bg/zavarivanie-chaya",
+    "ceramics/bg/pialy-na-stole",
+    "ceramics/bg/obryv-u-volgi",
+  ].map((n) => `/assets/img/photos/${n}.webp`)),
   workshops: page("workshops", [
     "workshops/bg/studiya-stol",
     "workshops/bg/ruki-na-krugu",

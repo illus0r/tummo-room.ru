@@ -6,7 +6,6 @@ const typograf = new Typograf({ locale: ["ru", "en-US"] });
 module.exports = function (eleventyConfig) {
   // картинки копируем поимённо, чтобы случайный файл в img/ не уехал на сайт
   eleventyConfig.addPassthroughCopy("src/assets/img/*.{webp,svg}");
-  eleventyConfig.addPassthroughCopy("src/assets/img/bg");
   eleventyConfig.addPassthroughCopy("src/assets/img/photos");
   eleventyConfig.addPassthroughCopy("src/assets/css/style.css");
   eleventyConfig.addPassthroughCopy("src/assets/css/floors.css");

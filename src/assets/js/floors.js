@@ -54,7 +54,6 @@
   var textRects = [];   // занятые текстом, логотипом и футером прямоугольники
   var floorBands = [];  // этажи в строках сетки: { s, e }
   var floors = [];
-  var scrollTimeline = window.CSS && CSS.supports('animation-timeline: view()');
 
   // ---- раскладка текста и этажей (компьютер) ----
   function layoutText() {
@@ -149,11 +148,25 @@
     return textEls.map(function (_, i) { return { t: cuts[i], h: cuts[i + 1] - cuts[i] }; });
   }
 
+  // фон этажа грузим, когда этаж подходит к экрану. Браузер сообщает об этом сам —
+  // слушать прокрутку и мерить каждый кадр не нужно
+  var floorSeen = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      floorSeen.unobserve(e.target);
+      floors.forEach(function (f) { if (f.el === e.target && !f.bg.src) f.bg.src = f.src; });
+    });
+  }, { rootMargin: '100% 0px' });
+
   function buildFloors() {
     var spans = floorSpans();
     // этажи переиспользуем, а не собираем заново: иначе фоны перезагружаются при каждом
     // изменении размера окна — а на телефоне его меняет одна только адресная строка
-    while (floors.length > spans.length) floors.pop().el.remove();
+    while (floors.length > spans.length) {
+      var gone = floors.pop();
+      floorSeen.unobserve(gone.el);
+      gone.el.remove();
+    }
     while (floors.length < spans.length) {
       var el = document.createElement('div');
       el.className = 'fl-floor';
@@ -164,8 +177,11 @@
       el.appendChild(bg); el.appendChild(dim);
       field.insertBefore(el, field.firstChild);
       floors.push({ el: el, bg: bg, dim: dim });
+      floorSeen.observe(el);
     }
-    var vh = window.innerHeight, k = cfg.parallax / 100;
+    // параллакс — только на компьютере. На телефоне адресная строка прячется прямо во время
+    // прокрутки, меняя высоту окна, и любое движение фона превращается в дрожание
+    var vh = window.innerHeight, k = isMobile() ? 0 : cfg.parallax / 100;
     floors.forEach(function (f, i) {
       var h = spans[i].h;
       f.el.style.top = spans[i].t + 'px';
@@ -179,19 +195,6 @@
       f.bg.style.height = Math.ceil(h * (1 - k) + vh * k) + 'px';
       f.bg.style.setProperty('--from', (-k * vh) + 'px');
       f.bg.style.setProperty('--to', (k * h) + 'px');
-    });
-    updateFloors();
-  }
-
-  function updateFloors() {
-    var vh = window.innerHeight;
-    floors.forEach(function (f) {
-      var r = f.el.getBoundingClientRect();
-      // фон грузим, когда этаж ближе двух экранов
-      if (!f.bg.src && r.top < vh * 2 && r.bottom > -vh) f.bg.src = f.src;
-      // параллакс считает браузер по прокрутке (floors.css); из скрипта — только в старых браузерах,
-      // там фон отстаёт от прокрутки на кадр и может подрагивать
-      if (!scrollTimeline) f.bg.style.transform = 'translateY(' + (-f.k * r.top) + 'px)';
     });
   }
 
@@ -323,17 +326,22 @@
     };
     next.src = name;
   }
-  function slotNearView(sl) {
-    var r = sl.el.getBoundingClientRect();
-    return r.bottom > -window.innerHeight / 2 && r.top < window.innerHeight * 1.5;
-  }
-  function fillSlots() {
-    if (!isMobile()) return;
-    slots.forEach(function (sl, i) { if (!sl.name && slotNearView(sl)) swapSlot(i); });
-  }
+  // место под фото наполняем, когда оно подъезжает к экрану, и помним, видно ли его сейчас.
+  // На компьютере места скрыты (display:none), поэтому наблюдатель про них молчит сам собой
+  var slotSeen = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      slots.forEach(function (sl, i) {
+        if (sl.el !== e.target) return;
+        sl.near = e.isIntersecting;
+        if (e.isIntersecting && !sl.name) swapSlot(i);
+      });
+    });
+  }, { rootMargin: '50% 0px' });
+  slots.forEach(function (sl) { slotSeen.observe(sl.el); });
+
   setInterval(function () {
-    if (!isMobile() || cfg.paused || reduce || document.hidden) return;
-    var near = slots.filter(slotNearView);
+    if (cfg.paused || reduce || document.hidden) return;
+    var near = slots.filter(function (sl) { return sl.near; });
     if (near.length) swapSlot(slots.indexOf(pick(near)));
   }, 3500);
 
@@ -341,20 +349,22 @@
   function apply() {
     layoutText();
     buildFloors();
-    fillSlots();
   }
 
-  var resizeTimer, scrollFrame = 0;
-  window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(apply, 130); });
+  var resizeTimer, lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    // на телефоне высоту окна меняет одна только адресная строка, а раскладка телефона
+    // от высоты не зависит вовсе. Пересчитывать нечего, и именно лишний пересчёт
+    // прямо посреди прокрутки давал рывок
+    if (isMobile() && window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(apply, 130);
+  });
   // переход телефон↔компьютер пересчитываем сразу, не ждём паузы после resize:
   // иначе заголовок остаётся с кеглем другого режима и распирает страницу вбок
   if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', apply);
   else if (mobileQuery.addListener) mobileQuery.addListener(apply);
-  window.addEventListener('scroll', function () {
-    if (scrollFrame) return;
-    scrollFrame = requestAnimationFrame(function () { scrollFrame = 0; updateFloors(); fillSlots(); });
-  }, { passive: true });
-
   apply();
   // шрифт грузится со стороны: когда он встанет, высота абзацев меняется — пересчитываем этажи
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);

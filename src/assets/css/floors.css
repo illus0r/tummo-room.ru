@@ -4,8 +4,9 @@
 /* этажи с фонами (компьютер) */
 .fl-floor{position:absolute;left:0;right:0;overflow:hidden;overflow:clip;z-index:0}
 .fl-floor-bg{position:absolute;top:0;left:0;width:100%;object-fit:cover;will-change:transform;filter:saturate(.9)}
-/* параллакс фона считает сам браузер при прокрутке — без отставания на кадр и дрожания.
-   --from/--to и высоту фона задаёт floors.js; в браузерах без поддержки фон двигает скрипт */
+/* параллакс целиком на браузере: он сам считает его по прокрутке, скрипт в этом не участвует.
+   --from/--to и высоту фона задаёт floors.js. Где animation-timeline не поддерживается,
+   фон просто стоит на месте — двигать его из скрипта значит отставать на кадр и дрожать */
 @supports (animation-timeline: view()){
   .fl-floor{view-timeline-name:--fl-floor}
   .fl-floor-bg{animation:fl-parallax linear both;animation-timeline:--fl-floor;animation-range:cover 0% cover 100%}
@@ -57,6 +58,9 @@
      иначе их перекроет фон этажа (он позиционирован, а z-index:0 рисуется поверх потока) */
   .fl{height:auto!important;overflow:visible;padding:1.2rem 1.35rem 2.5rem}
   .fl-photo{display:none!important}
+  /* фон на телефоне неподвижен. Адресная строка прячется прямо во время прокрутки
+     и меняет высоту окна — любое движение фона на этом фоне читается как дрожание */
+  .fl-floor-bg{animation:none;will-change:auto}
   .fl-logo{position:relative;left:auto;top:auto;display:block;margin:.5rem 0}
   .fl-title{position:relative;left:auto;top:auto;transform:none;z-index:3;
     margin-top:2.4rem;letter-spacing:.18em;font-size:clamp(22px,6.6vw,34px)}
