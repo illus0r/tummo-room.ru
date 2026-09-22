@@ -78,4 +78,39 @@
 }
 @media (prefers-reduced-motion:reduce){.fl-photo,.fl-slot img{transition-duration:200ms}}
 .fl-p{margin-top:.6em}
+.fl-h{margin:1.2em 0 .5em;font-size:1.3em;font-weight:300;line-height:1.3}
+.fl-h:first-child{margin-top:0}
 .fl-list{margin-top:.4em;padding-left:1.1em;list-style:"— "}
+
+/* галерея «Примеры работ» (gallery.js). На компьютере место и ширину ей даёт floors.js,
+   фото в ряду — --g-cols в ceramics.njk */
+.fl-gallery{position:absolute;z-index:2;box-sizing:border-box}
+.fl-g-grid{display:grid;grid-template-columns:repeat(var(--g-cols,8),1fr);gap:6px}
+.fl-g-item{position:relative;display:block;aspect-ratio:3/4;padding:0;border:0;
+  overflow:hidden;background:none;cursor:pointer}
+.fl-g-item img{width:100%;height:100%;object-fit:cover;object-position:50% 65%;display:block}
+/* затемнение: у открытого фото — насовсем, при наведении — чуть-чуть */
+.fl-g-item::after{content:"";position:absolute;inset:0;background:#171717;opacity:0;transition:opacity .15s}
+.fl-g-item:hover::after{opacity:.2}
+.fl-g-item.on::after{opacity:.6}
+
+/* раскрытое фото — строкой под рядом, в половину ширины сетки, по центру; кнопки поверх фото.
+   Слой с кнопками высотой в экран и прилипает к нему — стрелки видны, пока фото на экране */
+.fl-g-open{grid-column:1/-1;position:relative;justify-self:center;width:50%;margin:0}
+.fl-g-frame{aspect-ratio:9/16}
+.fl-g-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.fl-g-ctl{position:absolute;inset:0;pointer-events:none}
+.fl-g-stick{position:sticky;top:0;height:min(100vh,100%);pointer-events:none}
+.fl-g-nav,.fl-g-close{position:absolute;border:0;padding:0;background:none;color:#fff;cursor:pointer;
+  opacity:.75;font-weight:300;line-height:1;pointer-events:auto;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.fl-g-nav:hover,.fl-g-close:hover{opacity:1}
+.fl-g-nav{top:50%;transform:translateY(-50%);font-size:56px;width:4rem;height:6rem}
+.fl-g-prev{left:0}
+.fl-g-next{right:0}
+.fl-g-close{top:.8rem;right:1rem;font-size:40px}
+@media (max-width:767px){
+  .fl-gallery{position:relative;margin-top:2.2rem}
+  .fl-g-grid{gap:4px}
+  .fl-g-open{width:100%} /* на телефоне половина — это меньше 170 px */
+  .fl-g-nav{width:3rem;font-size:44px}
+}

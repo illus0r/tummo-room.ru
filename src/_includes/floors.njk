@@ -30,3 +30,7 @@ layout: base.njk
 
 <script>window.PHOTOS = {{ photos[photoSet] | dump | safe }};</script>
 <script src="/assets/js/floors.js"></script>
+{%- if photoSet == "ceramics" %}
+<script>window.GALLERY = {{ photos.gallery | dump | safe }};</script>
+<script src="/assets/js/gallery.js"></script>
+{%- endif %}

@@ -51,6 +51,11 @@
   var mobileQuery = window.matchMedia('(max-width:767px)');
   function isMobile() { return mobileQuery.matches; }
   var textEls = [].slice.call(field.querySelectorAll('[data-txt]'));
+  // галерея (gallery.js) и абзац, перед которым она стоит
+  var gallery = field.querySelector('[data-gallery]');
+  var galleryNext = gallery && textEls.filter(function (el) {
+    return gallery.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING;
+  })[0];
   var textRects = [];   // занятые текстом, логотипом и футером прямоугольники
   var floorBands = [];  // этажи в строках сетки: { s, e }
   var floors = [];
@@ -58,6 +63,7 @@
   // ---- раскладка текста и этажей (компьютер) ----
   function layoutText() {
     if (isMobile()) {
+      if (gallery) gallery.style.left = gallery.style.top = gallery.style.width = '';
       textEls.forEach(function (el) {
         el.style.left = el.style.right = el.style.top = el.style.width = '';
         el.classList.remove('hl');
@@ -96,6 +102,15 @@
     var blockRows = [];
     textRects = [];
     textEls.forEach(function (el, i) {
+      // галерея стоит перед этим абзацем — во всю ширину, за вычетом клетки с краёв
+      if (gallery && el === galleryNext) {
+        gallery.style.left = cell + 'px';
+        gallery.style.width = ((cols - 2) * cell) + 'px';
+        gallery.style.top = (row * cell) + 'px';
+        var gRows = Math.max(1, Math.ceil(gallery.offsetHeight / cell));
+        textRects.push({ l: 0, t: row * cell, r: cols * cell, b: (row + gRows) * cell });
+        row += gRows + cfg.txtGapRows;
+      }
       el.classList.toggle('hl', !!cfg.txtBgOn);
       el.style.width = (tcols * cell) + 'px';
       var toLeft = cfg.txtAlign === 1 || (cfg.txtAlign === 0 && i % 2 === 0);
@@ -363,6 +378,8 @@
   });
   // переход телефон↔компьютер пересчитываем сразу, не ждём паузы после resize:
   // иначе заголовок остаётся с кеглем другого режима и распирает страницу вбок
+  // галерея сообщает, что поменяла высоту (раскрыли или закрыли фото)
+  window.addEventListener('fl:relayout', function () { if (!isMobile()) apply(); });
   if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', apply);
   else if (mobileQuery.addListener) mobileQuery.addListener(apply);
   apply();
