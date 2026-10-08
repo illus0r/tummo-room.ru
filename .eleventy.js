@@ -12,6 +12,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/assets/js");
   eleventyConfig.addPassthroughCopy({ "src/favicon.ico": "favicon.ico" });
   eleventyConfig.addPassthroughCopy("CNAME");
+  // перетаскивание плиток в админке галереи; на страницах для посетителей не подключается
+  eleventyConfig.addPassthroughCopy({ "node_modules/sortablejs/Sortable.min.js": "admin/sortable.min.js" });
 
   eleventyConfig.addTransform("typograf", (content, outputPath) => {
     if (!outputPath || !outputPath.endsWith(".html")) return content;

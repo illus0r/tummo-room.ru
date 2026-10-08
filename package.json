@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "puppeteer-core": "^23.0.0",
+    "sortablejs": "^1.15.7",
     "typograf": "^7.8.0"
   },
   "packageManager": "pnpm@11.9.0"
